@@ -1,0 +1,31 @@
+{
+  "name": "motionofai",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MotionOfAI — premium interactive agency experience. Get more customers.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "frames:webp": "node scripts/convert-frames.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.0.6",
+    "@react-three/fiber": "^9.1.0",
+    "gsap": "^3.12.7",
+    "lenis": "^1.1.20",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5",
+    "three": "^0.172.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "sharp": "^0.35.3",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.7"
+  }
+}

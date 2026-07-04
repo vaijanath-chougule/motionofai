@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   FONT FACES
+   SF Pro Display / Neue Montreal are licensed fonts — drop the
+   real files into /public/fonts and they resolve automatically.
+   Inter (loaded in index.html) is the guaranteed fallback so the
+   site never shows a system-default flash.
+   ============================================================ */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: local('SF Pro Display'), local('SFProDisplay-Regular');
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neue Montreal';
+  src: local('Neue Montreal'), local('PPNeueMontreal-Regular');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  :root {
+    --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+    color-scheme: light;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    /* Lenis drives scrolling — native smooth-scroll must be off */
+    scroll-behavior: auto;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    margin: 0;
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'ss01', 'cv01', 'cv11';
+  }
+
+  ::selection {
+    background: rgba(37, 99, 235, 0.14);
+    color: #111111;
+  }
+
+  /* Hide the native cursor on precision pointers — custom cursor takes over */
+  @media (hover: hover) and (pointer: fine) {
+    body.has-custom-cursor,
+    body.has-custom-cursor * {
+      cursor: none !important;
+    }
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+
+  /* Accessibility: honour reduced-motion — kill decorative animation */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-shell px-6 md:px-10 lg:px-16;
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-eyebrow text-muted;
+  }
+
+  /* Reveal primitive — GSAP flips the opacity/translate to their
+     resting values; this is the pre-animation resting (hidden) state. */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    will-change: transform, opacity;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.65);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 10px 40px -12px rgba(17, 17, 17, 0.12);
+  }
+
+  /* Elegant, non-cheap placeholder surface — soft studio light,
+     hairline frame, faint moving sheen. Replace inner content with
+     a <video> or <Canvas> later; the frame stays. */
+  .placeholder-surface {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 120% at 30% 20%, #fbfcff 0%, #f3f5fa 45%, #eceef5 100%);
+    border: 1px solid var(--tw-hairline, rgba(17, 17, 17, 0.08));
+    isolation: isolate;
+  }
+  .placeholder-surface::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.55) 42%,
+      rgba(255, 255, 255, 0) 64%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    pointer-events: none;
+  }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+@layer utilities {
+  .gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p public/hero-frames)",
+      "Bash(cp \"hero section assets\"/ezgif-frame-*.jpg public/hero-frames/)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"app HTTP %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"frame-001 HTTP %{http_code}  type=%{content_type}  size=%{size_download}\\\\n\" http://localhost:5173/hero-frames/ezgif-frame-001.jpg)",
+      "Bash(curl -s -o /dev/null -w \"frame-152 HTTP %{http_code}  size=%{size_download}\\\\n\" http://localhost:5173/hero-frames/ezgif-frame-152.jpg)",
+      "Bash(command -v magick)",
+      "Bash(command -v convert)",
+      "Bash(command -v ffmpeg)",
+      "Bash(command -v cwebp)",
+      "Bash(npm install *)",
+      "Bash(xargs echo \"webp files:\")",
+      "Bash(node -e ' *)"
+    ]
+  }
+}
