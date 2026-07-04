@@ -6,7 +6,7 @@ import HeroSequence from './HeroSequence';
 import ScrollIndicator from './ScrollIndicator';
 import MagneticButton from '../common/MagneticButton';
 import { CTA } from '../../utils/constants';
-import { prefersReducedMotion } from '../../utils/device';
+import { prefersReducedMotion, isTouch } from '../../utils/device';
 
 const OFFERINGS = ['Premium 3D Websites', 'AI Voice Agents', 'AI Video Production'];
 
@@ -50,12 +50,15 @@ export default function Hero() {
         return;
       }
 
-      // Scrub the frame sequence across the whole pinned scene.
+      // Scrub the frame sequence across the whole pinned scene. Touch has
+      // no smoothed momentum layer to hide behind, so a shorter catch-up
+      // keeps frames locked to the finger (a long scrub trails and reads
+      // as lag); desktop keeps the longer, more cinematic glide.
       ScrollTrigger.create({
         trigger: el,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 1,
+        scrub: isTouch() ? 0.55 : 1,
         onUpdate: (self) => seq?.setProgress(self.progress),
       });
 

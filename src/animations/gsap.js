@@ -5,6 +5,12 @@ import { Flip } from 'gsap/Flip';
 // Single registration point for GSAP plugins used across the app.
 gsap.registerPlugin(ScrollTrigger, Flip);
 
+// Mobile browsers fire a resize every time the address bar shows/hides
+// during scroll. Left unhandled that re-measures pinned scenes mid-scroll
+// and makes the hero "jump". Ignoring it keeps the scrubbed sequence
+// gliding smoothly on phones.
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 // Premium easing vocabulary — deliberately no bounce / no elastic.
 export const EASE = {
   premium: 'power3.out',

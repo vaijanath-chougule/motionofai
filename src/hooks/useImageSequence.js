@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { isLowPowerDevice, isTouch } from '../utils/device';
 
 /**
  * Apple-style scroll-driven image sequence.
@@ -22,7 +23,21 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
   const targetRef = useRef(0); // desired frame index (float)
   const drawnRef = useRef(-1); // last frame actually painted
   const rafRef = useRef(0);
+  const ctxRef = useRef(null);
   const [loadedCount, setLoadedCount] = useState(0);
+
+  // Low-latency 2D context, cached. `desynchronized` lets the browser
+  // skip a compositor hop so painted frames land closer to the scroll
+  // that requested them (noticeably tighter on mobile). Smoothing state
+  // is (re)applied on resize, since sizing the canvas resets it.
+  const getCtx = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    if (!ctxRef.current) {
+      ctxRef.current = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    }
+    return ctxRef.current;
+  }, []);
 
   // --- cover-fit blit in device pixels ---
   const paint = useCallback((index) => {
@@ -47,7 +62,8 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
     if (f === drawnRef.current) return; // nothing changed
     drawnRef.current = f;
 
-    const ctx = canvas.getContext('2d', { alpha: false });
+    const ctx = getCtx();
+    if (!ctx) return;
     const cw = canvas.width;
     const ch = canvas.height;
     const ir = img.naturalWidth / img.naturalHeight;
@@ -56,7 +72,7 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
     let dh;
     if (ir > cr) { dh = ch; dw = ch * ir; } else { dw = cw; dh = cw / ir; }
     ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
-  }, [frameCount]);
+  }, [frameCount, getCtx]);
 
   const scheduleDraw = useCallback(() => {
     if (rafRef.current) return;
@@ -75,15 +91,27 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
   const resize = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Cap device-pixel ratio: full DPR on capable devices, trimmed on
+    // low-power phones where filling 3x pixels every frame is what starves
+    // the scroll of frames. The image is in motion — the drop is invisible.
+    const cap = isLowPowerDevice() ? 1.5 : 2;
+    const dpr = Math.min(window.devicePixelRatio || 1, cap);
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     if (!w || !h) return;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
+    // Sizing the canvas resets context state — reapply smoothing. 'medium'
+    // on touch is materially cheaper than 'high' and indistinguishable on
+    // a moving, cover-fit frame.
+    const ctx = getCtx();
+    if (ctx) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = isTouch() ? 'medium' : 'high';
+    }
     drawnRef.current = -1; // force repaint at new size
     paint(targetRef.current);
-  }, [paint]);
+  }, [paint, getCtx]);
 
   useEffect(() => {
     imagesRef.current = new Array(frameCount);
