@@ -125,6 +125,26 @@
       0 10px 40px -12px rgba(17, 17, 17, 0.12);
   }
 
+  /* Frosted glass secondary CTA. Written with the -webkit- prefix by hand
+     because autoprefixer doesn't emit it here — without it the blur is
+     invisible on Safari/iOS, exactly where this button sits over bright
+     hero media. Paint-only hover (color/border/blur intensify); the lift
+     + scale live on a separate wrapper so the magnetic GSAP transform is
+     never overridden. */
+  .cta-glass {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: 0 8px 24px -10px rgba(15, 23, 42, 0.28);
+  }
+  .cta-glass:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+  }
+
   /* Elegant, non-cheap placeholder surface — soft studio light,
      hairline frame, faint moving sheen. Replace inner content with
      a <video> or <Canvas> later; the frame stays. */

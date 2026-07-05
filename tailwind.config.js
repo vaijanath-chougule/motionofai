@@ -61,10 +61,18 @@ export default {
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
-        'scroll-dot': {
-          '0%': { transform: 'translateY(0)', opacity: '0' },
-          '35%': { opacity: '1' },
-          '70%': { transform: 'translateY(14px)', opacity: '0' },
+        // Dot rises BOTTOM → TOP inside the capsule. Position and fade are
+        // split into two tracks so the upward glide gets one clean
+        // ease-in-out over its whole travel (no mid-path hitch), while the
+        // opacity breathes in and out independently.
+        'scroll-dot-move': {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-14px)' },
+        },
+        'scroll-dot-fade': {
+          '0%': { opacity: '0' },
+          '25%': { opacity: '1' },
+          '65%': { opacity: '1' },
           '100%': { opacity: '0' },
         },
       },
@@ -72,7 +80,8 @@ export default {
         breathe: 'breathe 6s cubic-bezier(0.45, 0, 0.55, 1) infinite',
         'pulse-ring': 'pulse-ring 3.5s cubic-bezier(0.22, 1, 0.36, 1) infinite',
         shimmer: 'shimmer 2.4s ease-in-out infinite',
-        'scroll-dot': 'scroll-dot 2s cubic-bezier(0.45, 0, 0.55, 1) infinite',
+        'scroll-dot':
+          'scroll-dot-move 1.5s ease-in-out infinite, scroll-dot-fade 1.5s ease-in-out infinite',
       },
     },
   },

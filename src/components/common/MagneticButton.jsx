@@ -7,8 +7,14 @@ import { mergeRefs } from '../../utils/mergeRefs';
 const VARIANTS = {
   primary:
     'bg-ink text-white hover:bg-accent shadow-[0_16px_40px_-16px_rgba(37,99,235,0.55)]',
+  // Glassmorphism CTA (frosted blur + thin border + soft shadow) so it
+  // reads clearly over bright hero media. Visuals + prefixed backdrop
+  // blur live in the `.cta-glass` class; here we only set the 300ms
+  // paint transition. Transform is left to the magnetic GSAP layer, so
+  // `!transition-[...]` deliberately excludes it.
   secondary:
-    'bg-transparent text-ink border border-hairline hover:border-ink/30 hover:bg-ink/[0.03]',
+    'text-ink cta-glass ' +
+    '!transition-[background-color,border-color,box-shadow,backdrop-filter] !duration-300',
   accent: 'bg-accent text-white hover:bg-ink',
   ghost: 'bg-transparent text-ink hover:text-accent',
 };

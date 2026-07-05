@@ -26,6 +26,7 @@ export default function Hero() {
   const seqRef = useRef(null);
   const parallaxRef = useParallax({ max: 16 });
   const reduce = prefersReducedMotion();
+  const touch = isTouch();
 
   useIsomorphicLayoutEffect(() => {
     const el = scene.current;
@@ -37,7 +38,7 @@ export default function Hero() {
         const tl = gsap.timeline({ defaults: { ease: EASE.premium } });
         tl.from('[data-hero-eyebrow]', { y: 20, opacity: 0, duration: DUR.base }, 0.1)
           .from('[data-hero-word]', { yPercent: 120, opacity: 0, duration: DUR.slow, stagger: 0.09 }, 0.2)
-          .from('[data-hero-sub]', { y: 24, opacity: 0, duration: DUR.base, stagger: 0.08 }, 0.5)
+          .from('[data-hero-sub]', { y: 20, opacity: 0, duration: DUR.base, ease: EASE.premium, stagger: 0.15 }, 0.2)
           .from('[data-hero-cta]', { y: 24, opacity: 0, duration: DUR.base, stagger: 0.1 }, 0.7)
           .from('[data-hero-scroll]', { opacity: 0, duration: DUR.base }, 0.9);
       }
@@ -50,15 +51,17 @@ export default function Hero() {
         return;
       }
 
-      // Scrub the frame sequence across the whole pinned scene. Touch has
-      // no smoothed momentum layer to hide behind, so a shorter catch-up
-      // keeps frames locked to the finger (a long scrub trails and reads
-      // as lag); desktop keeps the longer, more cinematic glide.
+      // Scrub the frame sequence across the whole pinned scene. On touch
+      // the scene is kept short (see section height below) so a small
+      // swipe advances many frames — high sensitivity, the sequence flies
+      // through — and a light scrub then smooths that fast stepping so it
+      // reads fluid rather than choppy, while still tracking the finger.
+      // Desktop keeps its longer, more cinematic glide.
       ScrollTrigger.create({
         trigger: el,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: isTouch() ? 0.55 : 1,
+        scrub: touch ? 0.5 : 1,
         onUpdate: (self) => seq?.setProgress(self.progress),
       });
 
@@ -78,7 +81,9 @@ export default function Hero() {
   return (
     <section
       ref={scene}
-      className={`relative w-full ${reduce ? 'h-[100svh]' : 'h-[320svh]'}`}
+      className={`relative w-full ${
+        reduce ? 'h-[100svh]' : touch ? 'h-[200svh]' : 'h-[320svh]'
+      }`}
     >
       {/* Pinned stage */}
       <div className="sticky top-0 flex h-[100svh] min-h-[600px] items-center justify-center overflow-hidden">
@@ -101,7 +106,11 @@ export default function Hero() {
               </span>
             </h1>
 
-            <div data-parallax="0.3" className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-display-sm font-medium text-muted">
+            <div
+              data-parallax="0.3"
+              className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-3 text-display-sm font-semibold leading-[1.2] text-[#1E293B]"
+              style={{ textShadow: '0 1px 2px rgba(255, 255, 255, 0.6)' }}
+            >
               {OFFERINGS.map((o, i) => (
                 <span key={o} data-hero-sub className="inline-flex items-center gap-3">
                   {i > 0 && <span className="text-accent/50">·</span>}
@@ -117,10 +126,15 @@ export default function Hero() {
                 </MagneticButton>
               </span>
               <span data-hero-cta>
-                <MagneticButton to="/#work" variant="secondary" strength={0.5}>
-                  {CTA.secondary}
-                  <Arrow />
-                </MagneticButton>
+                {/* Hover lift + scale live on this non-magnetic wrapper so
+                    they compose with (instead of fight) the button's GSAP
+                    magnetic transform. */}
+                <span className="inline-block rounded-full transition-transform duration-300 ease-premium will-change-transform hover:-translate-y-[3px] hover:scale-[1.03]">
+                  <MagneticButton to="/#work" variant="secondary" strength={0.5}>
+                    {CTA.secondary}
+                    <Arrow />
+                  </MagneticButton>
+                </span>
               </span>
             </div>
           </div>
@@ -136,7 +150,7 @@ export default function Hero() {
 
 function Arrow() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-500 group-hover:translate-x-1">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-300 ease-premium group-hover:translate-x-1">
       <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
