@@ -19,9 +19,39 @@
     <!-- Preconnect for future asset CDNs (fonts / video / GLB) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Fonts loaded non-render-blocking: paint immediately with the local
+         SF Pro / system fallback, then swap Inter in when it arrives. -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      />
+    </noscript>
+
+    <!-- Preload the first hero frame (LCP) for the matching device set only,
+         so the scroll-sequence's opening frame paints as early as possible. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/hero-frames/ezgif-frame-001.webp"
+      media="(min-width: 768px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/hero-frames/mobile/ezgif-frame-001.webp"
+      media="(max-width: 767px)"
+      fetchpriority="high"
     />
 
     <title>MotionOfAI — Get More Customers</title>

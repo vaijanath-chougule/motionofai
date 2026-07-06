@@ -69,14 +69,6 @@
     color: #111111;
   }
 
-  /* Hide the native cursor on precision pointers — custom cursor takes over */
-  @media (hover: hover) and (pointer: fine) {
-    body.has-custom-cursor,
-    body.has-custom-cursor * {
-      cursor: none !important;
-    }
-  }
-
   h1, h2, h3, h4 {
     @apply font-display;
     text-wrap: balance;

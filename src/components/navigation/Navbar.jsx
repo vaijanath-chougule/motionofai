@@ -87,7 +87,7 @@ export default function Navbar() {
                   onClick={(e) => handleHashNav(e, link)}
                   onMouseEnter={() => setCursor('hover')}
                   onMouseLeave={resetCursor}
-                  className="relative rounded-full px-4 py-2 text-sm text-muted transition-colors duration-300 hover:text-ink"
+                  className="relative rounded-full px-4 py-2 text-sm text-muted transition-colors duration-300 hover:bg-accent-soft hover:text-accent"
                 >
                   {link.label}
                 </Link>

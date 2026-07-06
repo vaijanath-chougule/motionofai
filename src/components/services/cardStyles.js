@@ -5,7 +5,7 @@
 // elements so GSAP's reveal transform never fights the CSS hover transform.
 export const CARD_SHELL =
   'group relative flex flex-col overflow-hidden rounded-[32px] border border-hairline bg-white/60 p-3 md:p-4 ' +
-  'shadow-[0_30px_90px_-50px_rgba(17,17,17,0.30)] backdrop-blur-glass will-change-transform cursor-none ' +
+  'shadow-[0_30px_90px_-50px_rgba(17,17,17,0.30)] backdrop-blur-glass will-change-transform ' +
   'transition-[transform,box-shadow] duration-500 ease-premium ' +
   'hover:-translate-y-2 hover:scale-[1.02] hover:shadow-[0_50px_120px_-45px_rgba(17,17,17,0.35)]';
 

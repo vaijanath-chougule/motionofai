@@ -62,21 +62,21 @@ export default function ServiceCardVoice() {
   };
 
   return (
-    <article id="voice-agents" className={`${CARD_SHELL} !p-6`}>
+    <article
+      id="voice-agents"
+      role="button"
+      tabIndex={0}
+      aria-label="Open AI Voice Agents experience"
+      onClick={activate}
+      onKeyDown={onKey}
+      onMouseEnter={() => setCursor('view', 'Open')}
+      onMouseLeave={resetCursor}
+      className={`${CARD_SHELL} !p-6 cursor-pointer`}
+    >
       <div className="reveal flex flex-1 flex-col">
         {/* Centered sphere fills the card's vertical space */}
         <div className="flex flex-1 items-center justify-center py-8">
-          <div
-            role="button"
-            tabIndex={0}
-            aria-label="Open AI Voice Agents experience"
-            onClick={activate}
-            onKeyDown={onKey}
-            onMouseEnter={() => setCursor('view', 'Open')}
-            onMouseLeave={resetCursor}
-            className="group/sphere relative"
-            style={{ width: 'min(58vw, 300px)' }}
-          >
+          <div className="group/sphere relative" style={{ width: 'min(58vw, 300px)' }}>
             <SpherePlaceholder
               ref={sphereRef}
               interactive

@@ -51,17 +51,16 @@ export default function Hero() {
         return;
       }
 
-      // Scrub the frame sequence across the whole pinned scene. On touch
-      // the scene is kept short (see section height below) so a small
-      // swipe advances many frames — high sensitivity, the sequence flies
-      // through — and a light scrub then smooths that fast stepping so it
-      // reads fluid rather than choppy, while still tracking the finger.
-      // Desktop keeps its longer, more cinematic glide.
+      // Scrub the frame sequence across the pinned scene. The scene is kept
+      // short (see section height below) so even a small scroll advances
+      // many frames — high sensitivity, tightly connected to the input. A
+      // light scrub (low catch-up time) keeps that near 1:1 with the scroll
+      // rather than lagging behind it, while still smoothing the stepping.
       ScrollTrigger.create({
         trigger: el,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: touch ? 0.5 : 1,
+        scrub: 0.4,
         onUpdate: (self) => seq?.setProgress(self.progress),
       });
 
@@ -82,7 +81,7 @@ export default function Hero() {
     <section
       ref={scene}
       className={`relative w-full ${
-        reduce ? 'h-[100svh]' : touch ? 'h-[200svh]' : 'h-[320svh]'
+        reduce ? 'h-[100svh]' : touch ? 'h-[180svh]' : 'h-[200svh]'
       }`}
     >
       {/* Pinned stage */}
@@ -126,15 +125,12 @@ export default function Hero() {
                 </MagneticButton>
               </span>
               <span data-hero-cta>
-                {/* Hover lift + scale live on this non-magnetic wrapper so
-                    they compose with (instead of fight) the button's GSAP
-                    magnetic transform. */}
-                <span className="inline-block rounded-full transition-transform duration-300 ease-premium will-change-transform hover:-translate-y-[3px] hover:scale-[1.03]">
-                  <MagneticButton to="/#work" variant="secondary" strength={0.5}>
-                    {CTA.secondary}
-                    <Arrow />
-                  </MagneticButton>
-                </span>
+                {/* Button stays fixed on hover — only paint feedback
+                    (colour/border/blur) via the .cta-glass variant. */}
+                <MagneticButton to="/#work" variant="secondary" strength={0.5}>
+                  {CTA.secondary}
+                  <Arrow />
+                </MagneticButton>
               </span>
             </div>
           </div>

@@ -156,20 +156,27 @@ export default function VoiceAgentPage() {
           });
         });
 
-        // Phone finale — the sphere is already centred + small by scene 5,
-        // so raising the phone seats it inside the display. Sphere untouched.
+        // Phone finale — the WHOLE finale (phone rising + screen waking) plays
+        // as the final section scrolls into view and is fully complete the
+        // moment it reaches the top, i.e. exactly when the sphere has centred
+        // into the phone. Nothing is left to a pinned hold, so there is no
+        // extra scroll after the sphere meets the phone.
         gsap
           .timeline({
             scrollTrigger: {
               trigger: finale.current,
-              start: 'top top',
-              end: 'bottom bottom',
+              // Start exactly where the sphere begins centring (same 'top 60%'
+              // trigger below) so the phone rises WITH the sphere — not while
+              // the previous "Why Choose" copy is still on screen — and both
+              // finish together as the section reaches the top.
+              start: 'top 60%',
+              end: 'top top',
               scrub: 1,
             },
           })
           .to(phone.current, { yPercent: 0, ease: 'power2.out', duration: 1 }, 0)
-          .to(screenGlow.current, { opacity: 1, duration: 0.5 }, 0.55)
-          .to(screenUI.current, { opacity: 1, y: 0, duration: 0.5 }, 0.66);
+          .to(screenGlow.current, { opacity: 1, duration: 0.4 }, 0.6)
+          .to(screenUI.current, { opacity: 1, y: 0, duration: 0.4 }, 0.75);
       };
 
       const mm = gsap.matchMedia();
@@ -208,7 +215,7 @@ export default function VoiceAgentPage() {
               AI Voice Agents
             </p>
             <h1 data-reveal className="text-display-lg font-semibold text-ink opacity-0">
-              Get More <span className="text-accent">Customers.</span>
+              Get More <span className="text-accent">Customers</span>
             </h1>
             <p
               data-reveal
@@ -321,21 +328,25 @@ export default function VoiceAgentPage() {
           </Scene>
 
           {/* ===== 5 · BOOK A DISCOVERY CALL — sphere into phone ===== */}
-          <section id="book" ref={finale} data-va-panel className="relative min-h-[200vh]">
-            <div className="sticky top-0 flex h-[100svh] items-center">
+          <section id="book" ref={finale} data-va-panel className="relative min-h-[100svh]">
+            <div className="flex h-[100svh] items-center">
               <div className="shell w-full">
                 <div className="flex h-full flex-col items-center justify-between py-24 text-center md:flex-row md:justify-between md:py-0 md:text-left">
                   <div data-reveal className="max-w-xs opacity-0">
-                    <h2 className="text-display-sm font-semibold text-ink">Book A Discovery Call</h2>
+                    <h2 className="text-display-sm font-semibold text-ink">Grow While You Sleep</h2>
                     <p className="mt-5 text-lg leading-relaxed text-muted">
-                      Every customer carries a phone. Now your AI does too.
+                      Your AI Voice Agent continuously reaches potential customers, follows up with
+                      leads and books appointments — even outside business hours.
                     </p>
                   </div>
 
                   {/* centre gap reserved for the phone/sphere finale */}
                   <div className="hidden shrink-0 md:block md:w-[34%]" />
 
-                  <div data-reveal className="w-full opacity-0 sm:w-auto">
+                  <div
+                    data-reveal
+                    className="flex w-full justify-center opacity-0 sm:w-auto md:w-[33%]"
+                  >
                     <MagneticButton
                       href={`mailto:${BRAND.email}`}
                       variant="primary"
@@ -538,13 +549,15 @@ const Phone = forwardRef(function Phone({ glowRef, uiRef }, ref) {
         <div className="absolute left-1/2 top-3 h-1.5 w-16 -translate-x-1/2 rounded-full bg-ink/70" />
 
         <div ref={uiRef} className="absolute inset-0">
-          <div className="absolute left-1/2 top-10 flex -translate-x-1/2 items-center gap-2">
+          <div className="absolute left-1/2 top-10 flex -translate-x-1/2 flex-col items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-eyebrow text-ink">
-              Live
+            <span className="flex flex-col items-center text-[11px] font-semibold uppercase leading-tight tracking-eyebrow text-ink">
+              <span>Get</span>
+              <span>More</span>
+              <span>Customers</span>
             </span>
           </div>
 
@@ -558,7 +571,7 @@ const Phone = forwardRef(function Phone({ glowRef, uiRef }, ref) {
                 />
               ))}
             </div>
-            <p className="text-sm font-medium text-muted">Active Call</p>
+            <p className="text-sm font-medium text-muted">MotionOfAI</p>
           </div>
         </div>
       </div>

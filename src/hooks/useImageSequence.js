@@ -142,6 +142,10 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
         inFlight += 1;
         const img = new Image();
         img.decoding = 'async';
+        // The opening frame is the hero's LCP — fetch it ahead of the rest
+        // (matches the <link rel="preload"> in index.html); later frames
+        // stay at default priority so they don't crowd critical resources.
+        img.fetchPriority = i === 0 ? 'high' : 'auto';
         img.onload = () => onOne(i, img);
         img.onerror = () => {
           // WebP undecodable (rare) → retry this frame once as JPG.

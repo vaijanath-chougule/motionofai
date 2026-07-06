@@ -1,7 +1,6 @@
 import { SmoothScrollProvider } from './contexts/SmoothScrollContext';
 import { CursorProvider } from './contexts/CursorContext';
 import { TransitionProvider } from './contexts/TransitionContext';
-import CustomCursor from './components/cursor/CustomCursor';
 import Navbar from './components/navigation/Navbar';
 import ScrollToTop from './components/common/ScrollToTop';
 import AppRoutes from './routes/AppRoutes';
@@ -17,7 +16,6 @@ export default function App() {
       <CursorProvider>
         <TransitionProvider>
           <ScrollToTop />
-          <CustomCursor />
           <Navbar />
           <AppRoutes />
         </TransitionProvider>

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Hero from '../components/hero/Hero';
 import ServiceShowcase from '../components/services/ServiceShowcase';
 import Work from '../components/sections/Work';
@@ -14,6 +14,17 @@ import FinalCTA from '../components/sections/FinalCTA';
  */
 export default function Home() {
   const main = useRef(null);
+
+  // Warm the code-split /voice-agents chunk while the browser is idle, so
+  // opening the Voice card navigates instantly instead of waiting on a
+  // cold fetch. Purely a prefetch — no behaviour or UI change.
+  useEffect(() => {
+    const prefetch = () => import('./VoiceAgentPage');
+    const ric = window.requestIdleCallback;
+    const id = ric ? ric(prefetch, { timeout: 2500 }) : setTimeout(prefetch, 1500);
+    return () => (ric ? window.cancelIdleCallback?.(id) : clearTimeout(id));
+  }, []);
+
   return (
     <main ref={main} className="relative">
       <Hero />

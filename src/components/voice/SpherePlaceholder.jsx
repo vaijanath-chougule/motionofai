@@ -66,7 +66,7 @@ function SphereSkin() {
         className="absolute inset-0 rounded-full"
         style={{
           background:
-            'radial-gradient(circle at 38% 32%, #ffffff 0%, #eef2fb 34%, #dbe3f5 62%, #cdd7ef 100%)',
+            'radial-gradient(circle at 38% 32%, #ffffff 0%, #eef4ff 34%, #d6e4ff 62%, #b8ceff 100%)',
           boxShadow:
             'inset -22px -26px 60px rgba(37,99,235,0.18), inset 18px 20px 50px rgba(255,255,255,0.9)',
         }}
