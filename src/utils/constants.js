@@ -23,9 +23,13 @@ export const NAV_LINKS = [
 ];
 
 export const CTA = {
-  primary: 'Book Strategy Call',
+  primary: 'Schedule a Call',
   secondary: 'View Our Work',
 };
+
+// Single MotionOfAI booking event — every CTA opens THIS same Calendly form
+// (via the global popup, see contexts/CalendlyContext). Change it in one place.
+export const CALENDLY_URL = 'https://calendly.com/vaibhavchougule2512/30min';
 
 // Scroll-driven hero image sequence (Apple-style). Frames are served from
 // Cloudinary with f_auto,q_auto, so each browser gets the best format

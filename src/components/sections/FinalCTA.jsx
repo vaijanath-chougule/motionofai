@@ -1,6 +1,7 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import MagneticButton from '../common/MagneticButton';
 import { CTA } from '../../utils/constants';
+import { useCalendly } from '../../contexts/CalendlyContext';
 
 /**
  * Final CTA — the last impression. Huge centered type restates the one
@@ -8,6 +9,7 @@ import { CTA } from '../../utils/constants';
  */
 export default function FinalCTA() {
   const scope = useScrollReveal();
+  const { openCalendly } = useCalendly();
 
   return (
     <section id="contact" ref={scope} className="relative overflow-hidden py-32 md:py-48">
@@ -26,7 +28,7 @@ export default function FinalCTA() {
           Book a strategy call. We'll map the fastest path from where you are to a full pipeline.
         </p>
         <div className="reveal mt-12">
-          <MagneticButton href="mailto:hello@motionofai.com" variant="primary" strength={0.55} className="px-10 py-5 text-base">
+          <MagneticButton onClick={openCalendly} variant="primary" strength={0.55} className="px-10 py-5 text-base">
             {CTA.primary}
           </MagneticButton>
         </div>

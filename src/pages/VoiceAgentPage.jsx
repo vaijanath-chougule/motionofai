@@ -5,7 +5,7 @@ import { useTransition } from '../contexts/TransitionContext';
 import { useSmoothScroll } from '../contexts/SmoothScrollContext';
 import SpherePlaceholder from '../components/voice/SpherePlaceholder';
 import MagneticButton from '../components/common/MagneticButton';
-import { BRAND } from '../utils/constants';
+import { useCalendly } from '../contexts/CalendlyContext';
 import { prefersReducedMotion } from '../utils/device';
 
 /**
@@ -56,6 +56,7 @@ export default function VoiceAgentPage() {
   const screenUI = useRef(null);
   const { consumeFlipState } = useTransition();
   const { lenis, start } = useSmoothScroll();
+  const { openCalendly } = useCalendly();
 
   useIsomorphicLayoutEffect(() => {
     if (lenis) lenis.scrollTo(0, { immediate: true });
@@ -232,9 +233,9 @@ export default function VoiceAgentPage() {
                 variant="primary"
                 strength={0.5}
                 className="w-full sm:w-auto"
-                onClick={() => lenis?.scrollTo('#book')}
+                onClick={openCalendly}
               >
-                Book Strategy Call
+                Schedule a Call
               </MagneticButton>
               <MagneticButton
                 variant="secondary"
@@ -348,12 +349,12 @@ export default function VoiceAgentPage() {
                     className="flex w-full justify-center opacity-0 sm:w-auto md:w-[33%]"
                   >
                     <MagneticButton
-                      href={`mailto:${BRAND.email}`}
+                      onClick={openCalendly}
                       variant="primary"
                       strength={0.5}
                       className="w-full sm:w-auto"
                     >
-                      Book Strategy Call
+                      Schedule a Call
                     </MagneticButton>
                   </div>
                 </div>

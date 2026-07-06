@@ -1,6 +1,7 @@
 import { SmoothScrollProvider } from './contexts/SmoothScrollContext';
 import { CursorProvider } from './contexts/CursorContext';
 import { TransitionProvider } from './contexts/TransitionContext';
+import { CalendlyProvider } from './contexts/CalendlyContext';
 import Navbar from './components/navigation/Navbar';
 import ScrollToTop from './components/common/ScrollToTop';
 import AppRoutes from './routes/AppRoutes';
@@ -15,9 +16,11 @@ export default function App() {
     <SmoothScrollProvider>
       <CursorProvider>
         <TransitionProvider>
-          <ScrollToTop />
-          <Navbar />
-          <AppRoutes />
+          <CalendlyProvider>
+            <ScrollToTop />
+            <Navbar />
+            <AppRoutes />
+          </CalendlyProvider>
         </TransitionProvider>
       </CursorProvider>
     </SmoothScrollProvider>

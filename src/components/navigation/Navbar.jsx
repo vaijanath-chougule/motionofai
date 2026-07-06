@@ -6,6 +6,7 @@ import MobileMenu from './MobileMenu';
 import { NAV_LINKS, CTA } from '../../utils/constants';
 import { useSmoothScroll } from '../../contexts/SmoothScrollContext';
 import { useCursor } from '../../contexts/CursorContext';
+import { useCalendly } from '../../contexts/CalendlyContext';
 
 /**
  * Floating glass navigation. Transparent + blurred, centered pill on
@@ -18,6 +19,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { lenis, scrollTo } = useSmoothScroll();
   const { setCursor, resetCursor } = useCursor();
+  const { openCalendly } = useCalendly();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -111,8 +113,7 @@ export default function Navbar() {
 
           <div className="ml-auto hidden lg:block">
             <MagneticButton
-              to="/#contact"
-              onClick={(e) => handleHashNav(e, { to: '/#contact', section: 'contact' })}
+              onClick={openCalendly}
               variant="primary"
               className="px-6 py-3 text-sm"
               strength={0.5}

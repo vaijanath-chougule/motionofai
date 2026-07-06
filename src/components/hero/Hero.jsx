@@ -6,6 +6,7 @@ import HeroSequence from './HeroSequence';
 import ScrollIndicator from './ScrollIndicator';
 import MagneticButton from '../common/MagneticButton';
 import { CTA } from '../../utils/constants';
+import { useCalendly } from '../../contexts/CalendlyContext';
 import { prefersReducedMotion, isTouch } from '../../utils/device';
 
 const OFFERINGS = ['Premium 3D Websites', 'AI Voice Agents', 'AI Video Production'];
@@ -25,6 +26,7 @@ export default function Hero() {
   const scene = useRef(null);
   const seqRef = useRef(null);
   const parallaxRef = useParallax({ max: 16 });
+  const { openCalendly } = useCalendly();
   const reduce = prefersReducedMotion();
   const touch = isTouch();
 
@@ -120,7 +122,7 @@ export default function Hero() {
 
             <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row" data-parallax="0.2">
               <span data-hero-cta>
-                <MagneticButton to="/#contact" variant="primary" strength={0.5}>
+                <MagneticButton onClick={openCalendly} variant="primary" strength={0.5}>
                   {CTA.primary}
                 </MagneticButton>
               </span>

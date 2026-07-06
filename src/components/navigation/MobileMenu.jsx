@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { gsap, EASE } from '../../animations/gsap';
 import { NAV_LINKS, CTA } from '../../utils/constants';
 import MagneticButton from '../common/MagneticButton';
+import { useCalendly } from '../../contexts/CalendlyContext';
 
 /**
  * Full-screen glass menu for tablet/mobile. Links stagger in with the
@@ -12,6 +13,7 @@ import MagneticButton from '../common/MagneticButton';
 export default function MobileMenu({ open, onNavigate, onClose }) {
   const root = useRef(null);
   const itemsRef = useRef([]);
+  const { openCalendly } = useCalendly();
 
   useEffect(() => {
     const el = root.current;
@@ -56,10 +58,9 @@ export default function MobileMenu({ open, onNavigate, onClose }) {
         ref={(n) => (itemsRef.current[NAV_LINKS.length] = n)}
       >
         <MagneticButton
-          to="/#contact"
-          onClick={(e) => {
-            onNavigate(e, { to: '/#contact', section: 'contact' });
+          onClick={() => {
             onClose();
+            openCalendly();
           }}
           variant="primary"
         >
