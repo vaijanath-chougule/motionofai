@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useCursor } from '../../contexts/CursorContext';
 import ResponsiveVideo from '../media/ResponsiveVideo';
 import { MEDIA } from '../../utils/constants';
@@ -8,17 +9,36 @@ import { CARD_SHELL, CARD_MEDIA, CARD_MEDIA_ASPECT } from './cardStyles';
  * 3D card (9:16 mobile · 4:3 tablet · 16:9 desktop), autoplay/loop/muted,
  * with its own placeholder until assets land in /public/media.
  *
- * `id="ai-video"` preserves the existing nav anchor.
+ * A teaser card: clicking it OPENS the dedicated /ai-video-production
+ * page (the cinematic two-column portfolio) — it does not scroll to a
+ * section below the cards.
  */
 export default function ServiceCardVideo() {
+  const navigate = useNavigate();
   const { setCursor, resetCursor } = useCursor();
+
+  const open = () => {
+    resetCursor();
+    navigate('/ai-video-production');
+  };
+
+  const onKey = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      open();
+    }
+  };
 
   return (
     <article
-      id="ai-video"
-      className={CARD_SHELL}
-      onMouseEnter={() => setCursor('view', 'Play')}
+      role="button"
+      tabIndex={0}
+      aria-label="Open AI Video Production portfolio"
+      onClick={open}
+      onKeyDown={onKey}
+      onMouseEnter={() => setCursor('view', 'Open')}
       onMouseLeave={resetCursor}
+      className={`${CARD_SHELL} cursor-pointer`}
     >
       <div className="reveal flex flex-1 flex-col">
         <div className={`${CARD_MEDIA} ${CARD_MEDIA_ASPECT}`}>

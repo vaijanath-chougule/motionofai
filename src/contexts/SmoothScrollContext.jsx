@@ -35,8 +35,8 @@ export function SmoothScrollProvider({ children }) {
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.6,
+      wheelMultiplier: 1.15,
+      touchMultiplier: 1.8,
       lerp: 0.1,
     });
 

@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import Hero from '../components/hero/Hero';
 import ServiceShowcase from '../components/services/ServiceShowcase';
 import Work from '../components/sections/Work';
-import Process from '../components/sections/Process';
 import FinalCTA from '../components/sections/FinalCTA';
 
 /**
@@ -30,7 +29,6 @@ export default function Home() {
       <Hero />
       <ServiceShowcase />
       <Work />
-      <Process />
       <FinalCTA />
     </main>
   );

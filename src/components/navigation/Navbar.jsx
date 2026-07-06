@@ -39,6 +39,19 @@ export default function Navbar() {
     else lenis?.start();
   }, [menuOpen, lenis]);
 
+  // Logo → hero (top of the home page). If already home, smooth-scroll
+  // to the top; otherwise route home (ScrollToTop lands us at the hero).
+  const handleLogoClick = useCallback(
+    (e) => {
+      setMenuOpen(false);
+      if (location.pathname === '/') {
+        e.preventDefault();
+        scrollTo(0, { offset: 0 });
+      }
+    },
+    [location.pathname, scrollTo],
+  );
+
   const handleHashNav = useCallback(
     (e, link) => {
       if (!link.to.startsWith('/#')) return; // real route → let Router handle it
@@ -71,6 +84,7 @@ export default function Navbar() {
         >
           <Link
             to="/"
+            onClick={handleLogoClick}
             className="flex items-center gap-2 pr-2"
             onMouseEnter={() => setCursor('hover')}
             onMouseLeave={resetCursor}
