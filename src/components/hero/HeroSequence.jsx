@@ -21,7 +21,6 @@ const HeroSequence = forwardRef(function HeroSequence(_props, ref) {
   const { canvasRef, setProgress, loadedCount, frameCount } = useImageSequence({
     frameCount: HERO_SEQUENCE.count,
     getUrl: set.getUrl,
-    getFallbackUrl: set.getFallbackUrl,
   });
 
   useImperativeHandle(ref, () => ({ setProgress, loadedCount, frameCount }), [

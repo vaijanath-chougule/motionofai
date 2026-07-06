@@ -5,9 +5,9 @@
 // Components NEVER hardcode videos — they map over this data.
 //
 // To add a future project:
-//   1. Drop the assets into /public/videos/<category>/ as
-//      <slug>-desktop.mp4, <slug>-mobile.mp4, <slug>-poster.webp
-//   2. Add one object to VIDEO_PORTFOLIO below.
+//   1. Upload to Cloudinary under MotionOfAI/<Category>/{desktop,mobile}/
+//      as <slug>.mp4 (+ <slug>-poster.webp for the poster).
+//   2. Add one object to VIDEO_PORTFOLIO below via cdnVid()/cdnImg().
 // No component changes are required.
 //
 // Responsive split mirrors the Hero: ResponsiveVideo resolves
@@ -17,6 +17,8 @@
 // studio placeholder (poster first when present) — never a broken
 // player, zero layout shift.
 // ============================================================
+
+import { cdnImg, cdnVid } from '../config/cloudinary';
 
 // Column-level copy + destination. Fixed per the section design;
 // the scalable, growable part is VIDEO_PORTFOLIO below.
@@ -49,18 +51,18 @@ export const VIDEO_PORTFOLIO = [
     id: 'ad-01',
     title: 'Product Launch Spot',
     category: 'advertisements',
-    desktopVideo: '/videos/ai-advertisements/ad-01-desktop.mp4',
-    mobileVideo: '/videos/ai-advertisements/ad-01-mobile.mp4',
-    poster: '/videos/ai-advertisements/ad-01-poster.webp',
+    desktopVideo: cdnVid('AIVideoProduction/desktop/ad-01.mp4'),
+    mobileVideo: cdnVid('AIVideoProduction/mobile/ad-01.mp4'),
+    poster: cdnImg('AIVideoProduction/desktop/ad-01-poster.webp'),
     portfolioUrl: '/portfolio/ai-advertisements',
   },
   {
     id: 'film-01',
     title: 'Luxury Brand Film',
     category: 'cinematic',
-    desktopVideo: '/videos/ai-cinematic/film-01-desktop.mp4',
-    mobileVideo: '/videos/ai-cinematic/film-01-mobile.mp4',
-    poster: '/videos/ai-cinematic/film-01-poster.webp',
+    desktopVideo: cdnVid('AICinematic/desktop/film-01.mp4'),
+    mobileVideo: cdnVid('AICinematic/mobile/film-01.mp4'),
+    poster: cdnImg('AICinematic/desktop/film-01-poster.webp'),
     portfolioUrl: '/portfolio/ai-cinematic',
   },
 ];
