@@ -338,14 +338,13 @@ export default function VoiceAgentPage() {
           <section id="book" ref={finale} data-va-panel className="relative min-h-[100svh]">
             <div className="flex h-[100svh] items-center">
               <div className="shell w-full">
-                <div className="flex h-full min-h-[28svh] flex-col items-center justify-between pt-[2svh] pb-8 text-center sm:py-16 md:min-h-0 md:flex-row md:justify-between md:py-0 md:text-left">
+                <div className="flex h-full min-h-[62svh] flex-col items-center justify-between pt-[18svh] pb-8 text-center sm:min-h-0 sm:pt-[2svh] sm:py-16 md:flex-row md:justify-between md:py-0 md:text-left">
                   {/* Phone-first: the copy sits above the rising phone on
-                      mobile. `pt-[5svh]` is the vertical knob — DECREASE to
-                      move "Grow While You Sleep" higher, INCREASE to drop it
-                      closer to the phone. Shrinks/narrows so it never overlaps
-                      the phone. Full size + layout return at sm/md. */}
+                      mobile. The heading is small and sits just above the
+                      sphere; the button drops beneath the phone (below the
+                      "MotionOfAI" label). Full size + layout return at sm/md. */}
                   <div data-reveal className="max-w-[15rem] opacity-0 sm:max-w-xs">
-                    <h2 className="text-xl font-semibold text-ink sm:text-2xl md:text-display-sm">
+                    <h2 className="text-base font-semibold text-ink sm:text-2xl md:text-display-sm">
                       Grow While You Sleep
                     </h2>
                   </div>
@@ -362,7 +361,7 @@ export default function VoiceAgentPage() {
                       variant="primary"
                       size="compact"
                       strength={0.5}
-                      className="w-auto"
+                      className="w-auto scale-90 sm:scale-100"
                     >
                       Schedule a Call
                     </MagneticButton>
