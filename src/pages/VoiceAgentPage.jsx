@@ -39,7 +39,7 @@ const DESKTOP_POS = [
 // the UPPER area (y offset) as a subtle backdrop while content stacks below
 // it — legible, no overlap. It drops back to centre for the phone finale.
 const MOBILE_POS = [
-  { x: '0vw', y: '-24vh', scale: 0.52 }, // 0 hero
+  { x: '0vw', y: '-24vh', scale: 0.64 }, // 0 hero
   { x: '0vw', y: '-32vh', scale: 0.34 }, // 1 pricing
   { x: '0vw', y: '-32vh', scale: 0.34 }, // 2 live demo
   { x: '0vw', y: '-32vh', scale: 0.34 }, // 3 why
@@ -218,23 +218,23 @@ export default function VoiceAgentPage() {
         <div className="relative z-10 -mt-[100svh]">
           {/* ===== 1 · HERO — sphere right ===== */}
           <Scene side="left" width="md:max-w-[48%]" vAlign="end">
-            <p data-reveal className="eyebrow mb-6 opacity-0">
+            <p data-reveal className="eyebrow mb-2 opacity-0 sm:mb-6">
               AI Voice Agents
             </p>
-            <h1 data-reveal className="text-display-lg font-semibold text-ink opacity-0">
+            <h1 data-reveal className="text-display-md font-semibold text-ink opacity-0 md:text-display-lg">
               Get More <span className="text-accent">Customers</span>
             </h1>
             <p
               data-reveal
-              className="mt-5 max-w-xl text-2xl font-medium leading-snug text-ink opacity-0 md:text-3xl"
+              className="mt-2 max-w-xl text-base font-medium leading-snug text-ink opacity-0 sm:mt-5 sm:text-2xl md:text-3xl"
             >
               With our AI voice agent that never sleeps.
             </p>
-            <p data-reveal className="mt-5 max-w-xl text-lg leading-relaxed text-muted opacity-0">
+            <p data-reveal className="mt-2 max-w-xl text-sm leading-relaxed text-muted opacity-0 sm:mt-5 sm:text-lg">
               It answers calls, qualifies leads, books appointments and follows up automatically —
               24 hours a day.
             </p>
-            <div data-reveal className="mt-9 flex flex-col gap-4 opacity-0 sm:flex-row">
+            <div data-reveal className="mt-4 flex flex-col gap-2.5 opacity-0 sm:mt-9 sm:flex-row sm:gap-4">
               <MagneticButton
                 variant="primary"
                 strength={0.5}
@@ -252,7 +252,7 @@ export default function VoiceAgentPage() {
                 Watch Live Demo
               </MagneticButton>
             </div>
-            <ul data-reveal className="mt-11 flex flex-wrap gap-x-8 gap-y-3 opacity-0">
+            <ul data-reveal className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 opacity-0 sm:mt-11 sm:gap-x-8 sm:gap-y-3">
               {['24/7 Available', 'Human-like Conversations', 'Multilingual', 'CRM Integrated'].map(
                 (t) => (
                   <li key={t} className="flex items-center gap-2 text-sm text-muted">
@@ -388,11 +388,14 @@ function Scene({ id, side = 'left', width = 'md:max-w-[48%]', vAlign = 'center',
   // On mobile the sphere sits above; vAlign="end" drops the copy into the
   // lower area so it never fights the sphere. Desktop stays centred.
   const valign = vAlign === 'end' ? 'items-end md:items-center' : 'items-center';
+  // End-aligned (hero) sits lower on mobile: trim the bottom padding so the
+  // stacked copy drops beneath the sphere instead of riding into it.
+  const pad = vAlign === 'end' ? 'pt-20 pb-0 md:py-24' : 'py-20 md:py-24';
   return (
     <section
       id={id}
       data-va-panel
-      className={`relative flex min-h-[100svh] ${valign} py-20 md:py-24`}
+      className={`relative flex min-h-[100svh] ${valign} ${pad}`}
     >
       <div className="shell w-full">
         <div className={`flex ${justify}`}>
