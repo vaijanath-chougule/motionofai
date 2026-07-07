@@ -43,7 +43,7 @@ const MOBILE_POS = [
   { x: '0vw', y: '-32vh', scale: 0.34 }, // 1 pricing
   { x: '0vw', y: '-32vh', scale: 0.34 }, // 2 live demo
   { x: '0vw', y: '-32vh', scale: 0.34 }, // 3 why
-  { x: '0vw', y: '0vh', scale: 0.26 }, // 4 book — centre → phone
+  { x: '0vw', y: '0vh', scale: 0.32 }, // 4 book — centre → phone (a touch larger)
 ];
 
 export default function VoiceAgentPage() {
@@ -338,7 +338,7 @@ export default function VoiceAgentPage() {
           <section id="book" ref={finale} data-va-panel className="relative min-h-[100svh]">
             <div className="flex h-[100svh] items-center">
               <div className="shell w-full">
-                <div className="flex h-full flex-col items-center justify-between pt-[2svh] pb-8 text-center sm:py-16 md:flex-row md:justify-between md:py-0 md:text-left">
+                <div className="flex h-full min-h-[28svh] flex-col items-center justify-between pt-[2svh] pb-8 text-center sm:py-16 md:min-h-0 md:flex-row md:justify-between md:py-0 md:text-left">
                   {/* Phone-first: the copy sits above the rising phone on
                       mobile. `pt-[5svh]` is the vertical knob — DECREASE to
                       move "Grow While You Sleep" higher, INCREASE to drop it
@@ -348,10 +348,6 @@ export default function VoiceAgentPage() {
                     <h2 className="text-xl font-semibold text-ink sm:text-2xl md:text-display-sm">
                       Grow While You Sleep
                     </h2>
-                    <p className="mt-3 text-xs leading-snug text-ink sm:mt-4 sm:text-base sm:leading-relaxed sm:text-muted md:mt-5 md:text-lg">
-                      Your AI Voice Agent continuously reaches potential customers, follows up with
-                      leads and books appointments — even outside business hours.
-                    </p>
                   </div>
 
                   {/* centre gap reserved for the phone/sphere finale */}
