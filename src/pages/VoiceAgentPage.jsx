@@ -153,7 +153,12 @@ export default function VoiceAgentPage() {
             overwrite: 'auto',
           });
 
+        // Every scene EXCEPT the finale eases on enter and rests. The finale's
+        // centring is driven by the scrubbed timeline below so it lands in
+        // lock-step with the phone (see note there).
+        const lastIndex = panels.length - 1;
         panels.forEach((panel, i) => {
+          if (i === lastIndex) return;
           ScrollTrigger.create({
             trigger: panel,
             start: 'top 60%',
@@ -163,24 +168,28 @@ export default function VoiceAgentPage() {
           });
         });
 
-        // Phone finale — the WHOLE finale (phone rising + screen waking) plays
-        // as the final section scrolls into view and is fully complete the
-        // moment it reaches the top, i.e. exactly when the sphere has centred
-        // into the phone. Nothing is left to a pinned hold, so there is no
-        // extra scroll after the sphere meets the phone.
+        // Phone finale — the WHOLE finale (sphere centring + phone rising +
+        // screen waking) is scrubbed by scroll on ONE timeline, so the sphere
+        // reaches the centre of the phone at the exact same scroll position the
+        // phone finishes rising. Because that endpoint is 'top top' (the last
+        // section fills the viewport = end of page), the animation completes
+        // precisely as scrolling ends — no leftover scroll, and the sphere is
+        // never left centred while the phone is still on its way up.
+        const finalePos = POS[lastIndex];
         gsap
           .timeline({
             scrollTrigger: {
               trigger: finale.current,
-              // Start exactly where the sphere begins centring (same 'top 60%'
-              // trigger below) so the phone rises WITH the sphere — not while
-              // the previous "Why Choose" copy is still on screen — and both
-              // finish together as the section reaches the top.
               start: 'top 60%',
               end: 'top top',
               scrub: 1,
             },
           })
+          .to(
+            mover.current,
+            { x: finalePos.x, y: finalePos.y, scale: finalePos.scale, ease: 'power3.inOut', duration: 1 },
+            0,
+          )
           .to(phone.current, { yPercent: 0, ease: 'power2.out', duration: 1 }, 0)
           .to(screenGlow.current, { opacity: 1, duration: 0.4 }, 0.6)
           .to(screenUI.current, { opacity: 1, y: 0, duration: 0.4 }, 0.75);
