@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from 'react';
-import { InlineWidget } from 'react-calendly';
 import { gsap, EASE } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import { prefersReducedMotion } from '../../utils/device';
@@ -17,18 +16,26 @@ import { CALENDLY_URL } from '../../utils/constants';
  * in scoped classes.
  *
  * Performance: Calendly must not cost anything until this section is near.
- * We mount <InlineWidget> only after an IntersectionObserver fires (once),
- * so its script + iframe load lazily — no upfront weight, no layout shift
- * (the card reserves its height from first paint), Lighthouse stays high.
+ * We load Calendly's official widget.js + mount the inline embed only after
+ * an IntersectionObserver fires (once), so its script + iframe load lazily —
+ * no upfront weight, no layout shift (the card reserves its height from first
+ * paint), Lighthouse stays high.
  */
 
 // Elegant serif stack for the italic accent line. Kept local so the global
 // design system (SF Pro / Inter) is not modified.
 const SERIF = "'Playfair Display', 'Cormorant Garamond', Georgia, 'Times New Roman', serif";
 
+// Official Calendly inline embed. Branding (white bg, ink text, MotionOfAI
+// blue) is passed as query params — the same mechanism the reference site
+// uses — so no react-calendly wrapper is involved.
+const CALENDLY_WIDGET_SRC = 'https://assets.calendly.com/assets/external/widget.js';
+const CALENDLY_EMBED_URL = `${CALENDLY_URL}?hide_gdpr_banner=1&background_color=ffffff&text_color=111111&primary_color=2563eb`;
+
 export default function AIVideoCTA() {
   const scope = useRef(null);
   const calendlyMount = useRef(null);
+  const widgetRef = useRef(null);
   const [showCalendly, setShowCalendly] = useState(false);
 
   // Calendly needs an explicit pixel height (its iframe can't auto-size).
@@ -45,6 +52,45 @@ export default function AIVideoCTA() {
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, []);
+
+  // ── Load the official Calendly widget.js once the widget is shown, then
+  // initialise the inline embed into our container. widget.js reads the
+  // .calendly-inline-widget div's data-url and injects a responsive iframe
+  // that fills the parent — this is exactly the reference site's approach.
+  useEffect(() => {
+    if (!showCalendly) return undefined;
+
+    const init = () => {
+      if (window.Calendly && widgetRef.current) {
+        // Guard against double-init (StrictMode / re-runs): only initialise
+        // an empty container.
+        if (widgetRef.current.childElementCount === 0) {
+          window.Calendly.initInlineWidget({
+            url: CALENDLY_EMBED_URL,
+            parentElement: widgetRef.current,
+          });
+        }
+      }
+    };
+
+    // Reuse the script if it's already on the page; otherwise inject it.
+    let script = document.querySelector(`script[src="${CALENDLY_WIDGET_SRC}"]`);
+    if (window.Calendly) {
+      init();
+    } else if (script) {
+      script.addEventListener('load', init, { once: true });
+    } else {
+      script = document.createElement('script');
+      script.src = CALENDLY_WIDGET_SRC;
+      script.async = true;
+      script.addEventListener('load', init, { once: true });
+      document.body.appendChild(script);
+    }
+
+    return () => {
+      script?.removeEventListener('load', init);
+    };
+  }, [showCalendly]);
 
   // ── Lazy-load Calendly: only mount the widget once its card scrolls near
   // the viewport. Fires once, then disconnects. Falls back to eager mount if
@@ -251,20 +297,19 @@ export default function AIVideoCTA() {
               <div
                 ref={calendlyMount}
                 className="relative overflow-hidden rounded-[20px] bg-white"
-                style={{ boxShadow: '0 20px 60px -30px rgba(17,17,17,0.35)' }}
+                style={{ height: `${widgetHeight}px`, boxShadow: '0 20px 60px -30px rgba(17,17,17,0.35)' }}
               >
                 {showCalendly ? (
-                  <InlineWidget
-                    url={CALENDLY_URL}
-                    styles={{ width: '100%', height: `${widgetHeight}px` }}
-                    pageSettings={{
-                      backgroundColor: 'ffffff',
-                      primaryColor: '2563eb',
-                      textColor: '111111',
-                      hideEventTypeDetails: false,
-                      hideLandingPageDetails: false,
-                      hideGdprBanner: true,
-                    }}
+                  // Official Calendly inline embed (same approach as the
+                  // reference site): widget.js renders the iframe itself and
+                  // `min-width: 100%` lets it fill the card and shrink freely
+                  // on any viewport — no react-calendly 320px floor, no
+                  // iframe scaling, no transform, no fixed-width wrapper.
+                  <div
+                    ref={widgetRef}
+                    className="calendly-inline-widget h-full w-full"
+                    data-url={CALENDLY_EMBED_URL}
+                    style={{ minWidth: '100%', height: '100%' }}
                   />
                 ) : (
                   // Reserved-height placeholder so there's zero layout shift

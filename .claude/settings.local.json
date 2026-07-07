@@ -16,7 +16,8 @@
       "Bash(node -e ' *)",
       "Bash(curl -s -o /dev/null -w \"desktop frame001: HTTP %{http_code}  type=%{content_type}\\\\n\" \"https://res.cloudinary.com/dubfat3xq/image/upload/f_auto,q_auto/MotionOfAI/Hero/Desktop/frame001.webp\")",
       "Bash(curl -s -o /dev/null -w \"mobile  frame001: HTTP %{http_code}  type=%{content_type}\\\\n\" \"https://res.cloudinary.com/dubfat3xq/image/upload/f_auto,q_auto/MotionOfAI/Hero/Mobile/frame001.webp\")",
-      "Bash(xargs grep -l \"red\\\\|#\\\\|color\" src/)"
+      "Bash(xargs grep -l \"red\\\\|#\\\\|color\" src/)",
+      "WebFetch(domain:www.augmentables.in)"
     ]
   }
 }
