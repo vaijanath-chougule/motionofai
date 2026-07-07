@@ -246,7 +246,7 @@ export default function AIVideoCTA() {
                 textShadow: '0 0 30px rgba(37,99,235,0.22)',
               }}
             >
-              We&apos;ll Bring It To Life.
+              Let&apos;s Bring It To Life.
             </p>
 
             {/* Premium CTA button — scrolls to the live Calendly widget so

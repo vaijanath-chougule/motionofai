@@ -286,6 +286,28 @@
     animation: shimmer 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
     pointer-events: none;
   }
+
+  /* Cinematic reel: the editorial text panel re-keys on each active project
+     (key={active}) and plays this fade + slide-up on mount, so the copy
+     changes with every transition. Honours reduced-motion below. */
+  .reel-text {
+    animation: reel-text-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes reel-text-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reel-text {
+      animation: none;
+    }
+  }
 }
 
 /* ============================================================

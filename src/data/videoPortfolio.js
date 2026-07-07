@@ -70,3 +70,71 @@ export const VIDEO_PORTFOLIO = [
 // Hero (featured) video for a column = first item in that category.
 export const getFeaturedVideo = (categoryKey) =>
   VIDEO_PORTFOLIO.find((v) => v.category === categoryKey) ?? null;
+
+// ============================================================
+// FEATURED_REEL — the five showcase projects driving the cinematic,
+// pinned "film reel" on /ai-video-production. Order = scroll order.
+// Each object is one project card. Assets follow the same Cloudinary
+// convention as VIDEO_PORTFOLIO:
+//   MotionOfAI/AIVideoProduction/{desktop,mobile}/reel-0N.mp4
+//   MotionOfAI/AIVideoProduction/desktop/reel-0N-poster.webp
+// Until the real files exist, each card degrades to the elegant studio
+// placeholder (ResponsiveVideo / ReelVideo) — never a broken player.
+// ============================================================
+export const FEATURED_REEL = [
+  {
+    id: 'reel-01',
+    title: 'Neon Pulse',
+    category: 'AI Advertisement',
+    description:
+      'A luxury commercial crafted entirely with AI to maximise attention and conversions.',
+    duration: '0:32',
+    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-01.mp4'),
+    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-01.mp4'),
+    poster: cdnImg('AIVideoProduction/desktop/reel-01-poster.webp'),
+  },
+  {
+    id: 'reel-02',
+    title: 'Aurum',
+    category: 'Luxury Product Commercial',
+    description:
+      'A gold-lit product film where every reflection and highlight is AI-rendered to perfection.',
+    duration: '0:28',
+    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-02.mp4'),
+    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-02.mp4'),
+    poster: cdnImg('AIVideoProduction/desktop/reel-02-poster.webp'),
+  },
+  {
+    id: 'reel-03',
+    title: 'Origin',
+    category: 'AI Brand Film',
+    description:
+      "A brand's founding myth retold as cinematic, emotionally-charged AI storytelling.",
+    duration: '0:45',
+    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-03.mp4'),
+    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-03.mp4'),
+    poster: cdnImg('AIVideoProduction/desktop/reel-03-poster.webp'),
+  },
+  {
+    id: 'reel-04',
+    title: 'Atelier',
+    category: 'AI Fashion Campaign',
+    description:
+      'A couture campaign styled, shot and lit entirely by generative AI.',
+    duration: '0:38',
+    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-04.mp4'),
+    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-04.mp4'),
+    poster: cdnImg('AIVideoProduction/desktop/reel-04-poster.webp'),
+  },
+  {
+    id: 'reel-05',
+    title: 'Odyssey',
+    category: 'AI Cinematic Storytelling',
+    description:
+      'A short cinematic journey proving generative AI can genuinely move an audience.',
+    duration: '0:52',
+    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-05.mp4'),
+    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-05.mp4'),
+    poster: cdnImg('AIVideoProduction/desktop/reel-05-poster.webp'),
+  },
+];
