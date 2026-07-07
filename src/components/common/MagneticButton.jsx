@@ -19,6 +19,16 @@ const VARIANTS = {
   ghost: 'bg-transparent text-ink hover:text-accent',
 };
 
+// Padding / type-size presets. `compact` is phone-first: small on mobile,
+// full size from the `sm` breakpoint up — for CTAs that must fit a tight
+// mobile layout (e.g. the voice-agent phone finale) yet stay full-size on
+// desktop. `default` is unchanged, so every existing button is untouched.
+const SIZES = {
+  default: 'px-8 py-4 text-[15px]',
+  sm: 'px-5 py-2.5 text-sm',
+  compact: 'px-5 py-2.5 text-sm sm:px-8 sm:py-4 sm:text-[15px]',
+};
+
 /**
  * The site's single button primitive: magnetic pull toward the pointer,
  * an inner label that drifts a touch further (parallax depth), and
@@ -29,6 +39,7 @@ const MagneticButton = forwardRef(function MagneticButton(
   {
     children,
     variant = 'primary',
+    size = 'default',
     to,
     href,
     onClick,
@@ -43,7 +54,9 @@ const MagneticButton = forwardRef(function MagneticButton(
   const { setCursor, resetCursor } = useCursor();
 
   const base =
-    'group relative inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-[15px] font-medium tracking-tight transition-colors duration-500 ease-premium gpu will-change-transform';
+    `group relative inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-tight transition-colors duration-500 ease-premium gpu will-change-transform ${
+      SIZES[size] ?? SIZES.default
+    }`;
 
   const content = (
     <span data-magnetic-inner className="relative z-10 inline-flex items-center gap-2">

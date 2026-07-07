@@ -122,13 +122,19 @@ export default function VoiceAgentPage() {
       }
 
       // Gentle continuous glow shift so it feels alive, not static.
-      gsap.to(sphere.current, {
-        filter: 'saturate(1.15)',
-        repeat: -1,
-        yoyo: true,
-        duration: 4,
-        ease: 'sine.inOut',
-      });
+      // Desktop only: animating `filter` forces the browser to re-composite
+      // the blurred sphere subtree every frame, which janks scroll on phones
+      // — and a saturate 1 → 1.15 pulse is imperceptible on a small screen.
+      // Dropping it on mobile keeps the sphere journey smooth.
+      if (window.matchMedia('(min-width: 768px)').matches) {
+        gsap.to(sphere.current, {
+          filter: 'saturate(1.15)',
+          repeat: -1,
+          yoyo: true,
+          duration: 4,
+          ease: 'sine.inOut',
+        });
+      }
 
       // ---- The sphere's scene-to-scene journey ----
       // Per-scene triggers (not a linear scrub): when a scene activates the
@@ -332,10 +338,17 @@ export default function VoiceAgentPage() {
           <section id="book" ref={finale} data-va-panel className="relative min-h-[100svh]">
             <div className="flex h-[100svh] items-center">
               <div className="shell w-full">
-                <div className="flex h-full flex-col items-center justify-between py-24 text-center md:flex-row md:justify-between md:py-0 md:text-left">
-                  <div data-reveal className="max-w-xs opacity-0">
-                    <h2 className="text-display-sm font-semibold text-ink">Grow While You Sleep</h2>
-                    <p className="mt-5 text-lg leading-relaxed text-muted">
+                <div className="flex h-full flex-col items-center justify-between pt-[2svh] pb-8 text-center sm:py-16 md:flex-row md:justify-between md:py-0 md:text-left">
+                  {/* Phone-first: the copy sits above the rising phone on
+                      mobile. `pt-[5svh]` is the vertical knob — DECREASE to
+                      move "Grow While You Sleep" higher, INCREASE to drop it
+                      closer to the phone. Shrinks/narrows so it never overlaps
+                      the phone. Full size + layout return at sm/md. */}
+                  <div data-reveal className="max-w-[15rem] opacity-0 sm:max-w-xs">
+                    <h2 className="text-xl font-semibold text-ink sm:text-2xl md:text-display-sm">
+                      Grow While You Sleep
+                    </h2>
+                    <p className="mt-3 text-xs leading-snug text-ink sm:mt-4 sm:text-base sm:leading-relaxed sm:text-muted md:mt-5 md:text-lg">
                       Your AI Voice Agent continuously reaches potential customers, follows up with
                       leads and books appointments — even outside business hours.
                     </p>
@@ -351,8 +364,9 @@ export default function VoiceAgentPage() {
                     <MagneticButton
                       onClick={openCalendly}
                       variant="primary"
+                      size="compact"
                       strength={0.5}
-                      className="w-full sm:w-auto"
+                      className="w-auto"
                     >
                       Schedule a Call
                     </MagneticButton>
