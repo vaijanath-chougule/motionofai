@@ -32,14 +32,15 @@ export default function AIVideoCTA() {
   const [showCalendly, setShowCalendly] = useState(false);
 
   // Calendly needs an explicit pixel height (its iframe can't auto-size).
-  // Desktop 760px, mobile ~650px. Tracked in state and kept in sync on
-  // resize so the reserved placeholder and the live widget always match —
-  // no layout shift when the widget swaps in.
+  // Mobile is taller (720px) so the booking form's header + calendar fit
+  // without Calendly scrolling internally at the top; desktop stays 600px.
+  // Tracked in state and kept in sync on resize so the reserved placeholder
+  // and the live widget always match — no layout shift when it swaps in.
   const [widgetHeight, setWidgetHeight] = useState(600);
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
     const mq = window.matchMedia('(max-width: 767px)');
-    const sync = () => setWidgetHeight(mq.matches ? 560 : 600);
+    const sync = () => setWidgetHeight(mq.matches ? 720 : 600);
     sync();
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
@@ -217,7 +218,7 @@ export default function AIVideoCTA() {
 
           {/* ── RIGHT — floating animated-glass frame holding the live
               Calendly. Nudged a little left of the column edge. ───────── */}
-          <div data-card className="relative mx-auto w-full max-w-[460px] lg:mr-0 lg:-translate-x-6 xl:-translate-x-12">
+          <div data-card className="relative mx-auto w-full min-w-0 max-w-[460px] lg:mr-0 lg:-translate-x-6 xl:-translate-x-12">
             {/* Soft accent halo pooling behind the card. */}
             <div
               aria-hidden

@@ -199,6 +199,20 @@
     }
   }
 
+  /* react-calendly's <InlineWidget> hard-codes an inline min-width: 320px on
+     its container. Inside the glass card that 320px floor overflows narrow
+     phones (iPhone SE / Galaxy S20 are ~320–360px wide) and the section's
+     overflow-hidden then clips the widget's left/right edges. Force the
+     Calendly container AND its iframe to fill the card and shrink freely.
+     Width is already 100% on desktop (max-w-[460px] caps it), so this only
+     changes behaviour below that cap — the desktop layout is untouched. */
+  .calendly-inline-widget,
+  .calendly-inline-widget iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
   .calendly-sheen {
     position: absolute;
     inset: 0;
