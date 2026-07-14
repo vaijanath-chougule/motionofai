@@ -19,7 +19,7 @@ export const NAV_LINKS = [
   { label: '3D Websites', to: '/#3d-websites', section: '3d-websites' },
   { label: 'AI Voice Agents', to: '/voice-agents', section: 'voice-agents' },
   { label: 'AI Video Production', to: '/ai-video-production', section: 'ai-video' },
-  { label: 'Contact', to: '/contact' },
+  { label: 'Contact', to: '/#contact', section: 'contact' },
 ];
 
 export const CTA = {

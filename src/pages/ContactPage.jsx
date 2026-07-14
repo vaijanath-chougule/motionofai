@@ -9,7 +9,7 @@ import FinalCTA from '../components/sections/FinalCTA';
  */
 export default function ContactPage() {
   return (
-    <main className="relative flex min-h-[100svh] flex-col justify-center">
+    <main className="relative flex min-h-[100svh] flex-col">
       <FinalCTA />
     </main>
   );
