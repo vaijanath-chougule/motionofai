@@ -127,7 +127,7 @@ export default function CinematicReel({ projects }) {
             <div
               key={project.id}
               ref={(el) => (cardRefs.current[i] = el)}
-              className="absolute left-1/2 top-[46%] h-[74svh] max-h-[880px] w-[min(92vw,1720px)] will-change-transform"
+              className="absolute left-1/2 top-[calc(50%+40px)] h-[78svh] max-h-[900px] w-[min(92vw,1720px)] will-change-transform"
             >
               <ReelCard
                 project={project}

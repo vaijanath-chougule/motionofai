@@ -7,6 +7,7 @@ import PageLoader from '../components/common/PageLoader';
 const Home = lazy(() => import('../pages/Home'));
 const VoiceAgentPage = lazy(() => import('../pages/VoiceAgentPage'));
 const AIVideoProductionPage = lazy(() => import('../pages/AIVideoProductionPage'));
+const ContactPage = lazy(() => import('../pages/ContactPage'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 
 export default function AppRoutes() {
@@ -16,6 +17,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/voice-agents" element={<VoiceAgentPage />} />
         <Route path="/ai-video-production" element={<AIVideoProductionPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

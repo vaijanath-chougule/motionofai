@@ -143,6 +143,11 @@ export default function VoiceAgentPage() {
       const setupJourney = (POS) => {
         gsap.set(mover.current, POS[0]);
 
+        // True while the scrubbed finale owns the sphere. Scene moves must not
+        // fire in this window — a discrete moveTo would overwrite the scrub
+        // mid-flight and freeze the sphere as it exits the phone.
+        let finaleActive = false;
+
         const moveTo = (i) =>
           gsap.to(mover.current, {
             x: POS[i].x,
@@ -163,8 +168,8 @@ export default function VoiceAgentPage() {
             trigger: panel,
             start: 'top 60%',
             end: 'bottom 40%',
-            onEnter: () => moveTo(i),
-            onEnterBack: () => moveTo(i),
+            onEnter: () => !finaleActive && moveTo(i),
+            onEnterBack: () => !finaleActive && moveTo(i),
           });
         });
 
@@ -183,11 +188,16 @@ export default function VoiceAgentPage() {
               start: 'top 60%',
               end: 'top top',
               scrub: 1,
+              // Owns the sphere while active → suppress scene moveTos so they
+              // never overwrite the scrub and stall the sphere near the phone.
+              onToggle: (self) => {
+                finaleActive = self.isActive;
+              },
             },
           })
           .to(
             mover.current,
-            { x: finalePos.x, y: finalePos.y, scale: finalePos.scale, ease: 'power3.inOut', duration: 1 },
+            { x: finalePos.x, y: finalePos.y, scale: finalePos.scale, ease: 'none', duration: 1 },
             0,
           )
           .to(phone.current, { yPercent: 0, ease: 'power2.out', duration: 1 }, 0)
