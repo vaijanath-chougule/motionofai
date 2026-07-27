@@ -1,4 +1,4 @@
-# MotionOfAI
+# wenilo
 
 A premium, cinematic interactive experience with a single message: **Get More Customers.**
 

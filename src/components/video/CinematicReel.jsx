@@ -2,30 +2,41 @@ import { useRef, useState } from 'react';
 import { gsap, ScrollTrigger } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import ReelCard from './ReelCard';
+import ReelProgress from './ReelProgress';
 import ReelVideo from './ReelVideo';
 
 /**
- * CinematicReel — the desktop "film reel". The section is pinned and, as the
- * visitor scrolls, five video cards glide horizontally through the centre:
- * the active card is centred, full-size and opaque; neighbours sit smaller,
- * softer (≈70% opacity) and gently blurred. When a card reaches the centre it
- * begins playing and the previous one pauses.
+ * CinematicReel — the "film reel". The section is pinned and, as the visitor
+ * scrolls, five video cards glide horizontally through the centre: the active
+ * card is centred, full-size and opaque; neighbours sit smaller, softer
+ * (≈70% opacity) and gently blurred. When a card reaches the centre it begins
+ * playing and the previous one pauses.
+ *
+ * PHONES RUN THE SAME INTERACTION. There is no stacked mobile variant here:
+ * the stage pins, vertical scroll is converted to the same horizontal travel,
+ * and the section only releases once the last card has been reached. `mobile`
+ * changes geometry ONLY — a portrait card, a wider step so neighbours peek
+ * instead of overlapping, a lighter blur/tilt budget for phone GPUs — never
+ * the behaviour. (prefers-reduced-motion is handled upstream, which swaps in
+ * the vertical MobileReel instead.)
  *
  * How it works (60fps, zero React churn per frame):
  *   • One ScrollTrigger pins the stage and scrubs a proxy timeline 0→1.
  *   • render(p) maps p to a continuous position f = p·(n-1); every card's
  *     transform (x / scale / opacity / blur / rotateY / z) is a function of
  *     its distance from f, applied imperatively with gsap.set — no re-render.
+ *     The same p drives ReelProgress imperatively through its ref.
  *   • Only when the ROUNDED active index changes do we touch React state, to
- *     swap the play/pause target, the editorial text panel and the progress
- *     indicator. So the hot path never trips the reconciler.
+ *     swap the play/pause target and the progress counter. So the hot path
+ *     never trips the reconciler.
  */
-export default function CinematicReel({ projects }) {
+export default function CinematicReel({ projects, mobile = false }) {
   const n = projects.length;
   const sectionRef = useRef(null);
   const stageRef = useRef(null);
   const trackRef = useRef(null);
   const cardRefs = useRef([]);
+  const progressRef = useRef(null);
   const stepRef = useRef(0);
   const activeRef = useRef(0);
 
@@ -40,12 +51,21 @@ export default function CinematicReel({ projects }) {
 
     const cards = cardRefs.current.filter(Boolean);
 
-    // Distance (px) between adjacent card centres. Slightly less than the
-    // card width so neighbours peek in at the edges. Recomputed on refresh.
+    // Distance (px) between adjacent card centres. Desktop: slightly less
+    // than the card width so neighbours peek in at the edges. Mobile: a
+    // little MORE than the (portrait, much narrower) card, so the shrunken
+    // neighbours sit just outside the active card instead of under it.
     const measure = () => {
       const w = cards[0]?.offsetWidth || stage.offsetWidth * 0.52;
-      stepRef.current = w * 0.86;
+      stepRef.current = w * (mobile ? 1.08 : 0.86);
     };
+
+    // Phones pay for full-screen filters, so the off-centre blur and the
+    // 3D tilt are dialled back. Same curve, smaller budget.
+    const blurPer = mobile ? 1.7 : 2.4;
+    const blurMax = mobile ? 4.5 : 7;
+    const tiltPer = mobile ? 3.6 : 5;
+    const tiltMax = mobile ? 7 : 9;
 
     // Apply every card's transform for a continuous position f∈[0, n-1].
     const render = (p) => {
@@ -61,13 +81,16 @@ export default function CinematicReel({ projects }) {
           x: d * step,
           scale: 1 - ad * 0.13, // centre 1 → neighbour ~0.87
           opacity: Math.max(1 - ad * 0.34, 0.3), // neighbour ≈0.66–0.70
-          rotationY: gsap.utils.clamp(-9, 9, -d * 5),
+          rotationY: gsap.utils.clamp(-tiltMax, tiltMax, -d * tiltPer),
           zIndex: Math.round(100 - ad * 10),
           force3D: true,
         });
         // Soft blur while moving off-centre (cheap, GPU-composited).
-        el.style.filter = `blur(${Math.min(ad * 2.4, 7).toFixed(2)}px)`;
+        el.style.filter = `blur(${Math.min(ad * blurPer, blurMax).toFixed(2)}px)`;
       });
+
+      // Continuous 0→1 — the indicator never snaps to a card.
+      progressRef.current?.set(p);
 
       const nextActive = Math.round(f);
       if (nextActive !== activeRef.current) {
@@ -95,6 +118,7 @@ export default function CinematicReel({ projects }) {
         trigger: section,
         start: 'top top',
         // One viewport-height of scroll per transition — unhurried, cinematic.
+        // The pin holds until the final card has landed, then releases.
         end: () => '+=' + (n - 1) * window.innerHeight,
         pin: stage,
         scrub: 0.8,
@@ -108,12 +132,17 @@ export default function CinematicReel({ projects }) {
     }, section);
 
     return () => ctx.revert();
-  }, [n]);
+  }, [n, mobile]);
 
   return (
     <section ref={sectionRef} className="relative">
       {/* Pinned stage — one viewport tall. */}
-      <div ref={stageRef} className="relative h-[100svh] min-h-[620px] w-full overflow-hidden">
+      <div
+        ref={stageRef}
+        className={`relative w-full overflow-hidden ${
+          mobile ? 'h-[100svh]' : 'h-[100svh] min-h-[620px]'
+        }`}
+      >
         {/* Subtle blue ambient glow, low + centred. Nothing distracting. */}
         <div
           aria-hidden
@@ -122,18 +151,35 @@ export default function CinematicReel({ projects }) {
         />
 
         {/* The reel track — cards absolutely centred, transformed per frame. */}
-        <div ref={trackRef} className="absolute inset-0" style={{ perspective: '2000px' }}>
+        <div
+          ref={trackRef}
+          className="absolute inset-0"
+          style={{ perspective: mobile ? '1200px' : '2000px' }}
+        >
           {projects.map((project, i) => (
             <div
               key={project.id}
               ref={(el) => (cardRefs.current[i] = el)}
-              className="absolute left-1/2 top-[calc(50%+40px)] h-[78svh] max-h-[900px] w-[min(92vw,1720px)] will-change-transform"
+              className={
+                mobile
+                  ? // Height-driven 9:16 frame: the card always fits the
+                    // viewport (60svh, capped), and its width follows from the
+                    // aspect ratio so the portrait source fills it without
+                    // cropping on any phone. max-w is the safety clamp for
+                    // very narrow devices.
+                    'absolute left-1/2 top-[calc(50%-18px)] aspect-[9/16] h-[60svh] max-h-[560px] max-w-[76vw] will-change-transform'
+                  : 'absolute left-1/2 top-[calc(50%+40px)] h-[78svh] max-h-[900px] w-[min(92vw,1720px)] will-change-transform'
+              }
             >
               <ReelCard
                 project={project}
                 index={i}
                 total={n}
                 isActive={i === active}
+                // Phones show the film and nothing but its identity:
+                // category + title. No duration, no NN/TT counter — that
+                // lives in the progress pill instead.
+                minimal={mobile}
                 media={
                   <ReelVideo
                     desktopSrc={project.desktopVideo}
@@ -148,6 +194,20 @@ export default function CinematicReel({ projects }) {
             </div>
           ))}
         </div>
+
+        {/* wenilo's own scroll indicator — phones only. Driven imperatively
+            from render(), so it costs nothing per frame. */}
+        {mobile && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-[max(28px,env(safe-area-inset-bottom))] flex justify-center px-6">
+            <ReelProgress
+              ref={progressRef}
+              total={n}
+              active={active}
+              label="Scroll"
+              className="w-full max-w-[280px]"
+            />
+          </div>
+        )}
       </div>
     </section>
   );

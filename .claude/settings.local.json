@@ -17,7 +17,26 @@
       "Bash(curl -s -o /dev/null -w \"desktop frame001: HTTP %{http_code}  type=%{content_type}\\\\n\" \"https://res.cloudinary.com/dubfat3xq/image/upload/f_auto,q_auto/MotionOfAI/Hero/Desktop/frame001.webp\")",
       "Bash(curl -s -o /dev/null -w \"mobile  frame001: HTTP %{http_code}  type=%{content_type}\\\\n\" \"https://res.cloudinary.com/dubfat3xq/image/upload/f_auto,q_auto/MotionOfAI/Hero/Mobile/frame001.webp\")",
       "Bash(xargs grep -l \"red\\\\|#\\\\|color\" src/)",
-      "WebFetch(domain:www.augmentables.in)"
+      "WebFetch(domain:www.augmentables.in)",
+      "Bash(ls -la /tmp 2>/dev/null | head -50)",
+      "Read(//d/tmp/**)",
+      "Bash(find /tmp -maxdepth 3 -iname \"*wenilo*\" 2>/dev/null | head -20)",
+      "Bash(npx eslint *)",
+      "Bash(node -e \"try{require.resolve\\('playwright'\\);console.log\\('playwright yes'\\)}catch\\(e\\){console.log\\('playwright no'\\)}\")",
+      "Bash(mkdir -p tmp-shots)",
+      "Bash(node scripts/check-mobile-reel.mjs)",
+      "Bash(node scripts/check-mobile-reel-2.mjs)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5199/)",
+      "Bash(node scripts/measure-wordmark.mjs)",
+      "Bash(sed -i 's/}, null, 2\\)\\)\\);/}\\)\\)\\);/' scripts/diag2.mjs)",
+      "Bash(node scripts/diag2.mjs)",
+      "Bash(npx vite *)",
+      "Bash(cp -r dist dist-opt)",
+      "Bash(cp src/pages/VoiceAgentPage.jsx /tmp/VoiceAgentPage.opt.jsx)",
+      "Bash(git stash *)",
+      "Bash(cp -r dist dist-base)",
+      "Read(//tmp/**)",
+      "Bash(git checkout *)"
     ]
   }
 }

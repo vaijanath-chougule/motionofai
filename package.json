@@ -1,9 +1,9 @@
 {
-  "name": "motionofai",
+  "name": "wenilo",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "MotionOfAI — premium interactive agency experience. Get more customers.",
+  "description": "wenilo — premium interactive agency experience. Get more customers.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

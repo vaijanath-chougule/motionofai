@@ -10,7 +10,7 @@ export default function PageLoader() {
           <span className="h-2.5 w-2.5 rounded-full bg-accent" />
         </span>
         <span className="text-xs font-medium uppercase tracking-eyebrow text-muted">
-          MotionOfAI
+          wenilo
         </span>
       </div>
     </div>

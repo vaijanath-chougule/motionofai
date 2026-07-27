@@ -90,7 +90,7 @@ export default function Navbar() {
             className="flex items-center gap-2 pr-2"
             onMouseEnter={() => setCursor('hover')}
             onMouseLeave={resetCursor}
-            aria-label="MotionOfAI home"
+            aria-label="wenilo home"
           >
             <Logo />
           </Link>

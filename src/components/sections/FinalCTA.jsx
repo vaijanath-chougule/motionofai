@@ -8,6 +8,7 @@ import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect
 import { prefersReducedMotion } from '../../utils/device';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import MagneticButton from '../common/MagneticButton';
+import BrandWordmark from '../brand/BrandWordmark';
 import { CTA } from '../../utils/constants';
 import { useCalendly } from '../../contexts/CalendlyContext';
 
@@ -15,7 +16,7 @@ import { useCalendly } from '../../contexts/CalendlyContext';
  * Final CTA — the last impression. Huge centered type restates the one
  * promise, then a premium contact row (reads like navigation, never a
  * footer), the single premium button, and finally the giant full-bleed
- * MotionOfAI wordmark flush to the bottom — the exact treatment used to
+ * wenilo wordmark flush to the bottom — the exact treatment used to
  * close the AI Video Production page. Anchors #contact.
  *
  * Contacts are placeholders (not links yet). Phone uses a Lucide outline
@@ -23,7 +24,7 @@ import { useCalendly } from '../../contexts/CalendlyContext';
  * The row is a true CSS grid — 7 equal columns on desktop, 4 on tablet, 2
  * on mobile — so every icon shares one baseline and every column is equal
  * width regardless of label length (the phone number never widens its
- * column). Icons are monochrome and warm to MotionOfAI blue on hover while
+ * column). Icons are monochrome and warm to wenilo blue on hover while
  * the item lifts + scales. The row fades + rises in on view, 80ms stagger.
  */
 const CONTACTS = [
@@ -165,7 +166,7 @@ export default function FinalCTA() {
         </div>
       </div>
 
-      {/* ── Light-blue vertical wash — darkest MotionOfAI blue flush to the
+      {/* ── Light-blue vertical wash — darkest wenilo blue flush to the
           bottom of the page, fading up into pure white (same treatment as the
           AI Video Production section). Full-bleed, no hard edges. ────────── */}
       <div
@@ -198,24 +199,10 @@ export default function FinalCTA() {
         }}
       />
 
-      {/* ── Giant full-bleed MotionOfAI wordmark, flush to the bottom — the
-          exact treatment that closes the AI Video Production page. Letters
-          lighter at the top, darker MotionOfAI blue at the base. ─────────── */}
-      <div ref={wordmarkRef} className="relative z-10 mt-6 w-full select-none px-2 text-center md:mt-10">
-        <span
-          className="block font-display font-semibold leading-[0.8]"
-          style={{
-            fontSize: 'clamp(3rem, 17vw, 19rem)',
-            letterSpacing: '-0.045em',
-            backgroundImage: 'linear-gradient(180deg, #7aa2ff 0%, #2563eb 100%)',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            color: 'transparent',
-          }}
-        >
-          MotionOfAI
-        </span>
-      </div>
+      {/* ── Giant full-bleed wenilo wordmark, flush to the bottom — literally
+          the same component that closes the AI Video Production page, so both
+          signatures share one scale, gradient and typography. ─────────── */}
+      <BrandWordmark ref={wordmarkRef} className="z-10 mt-6 md:mt-10" />
     </section>
   );
 }

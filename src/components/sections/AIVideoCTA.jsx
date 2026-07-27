@@ -3,15 +3,16 @@ import { gsap, EASE } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import { prefersReducedMotion } from '../../utils/device';
 import { CALENDLY_URL } from '../../utils/constants';
+import BrandWordmark from '../brand/BrandWordmark';
 
 /**
  * AI Video Production — final CTA. The closing scene: a light, editorial
- * split panel matching the MotionOfAI theme. Left = huge headline + italic
+ * split panel matching the wenilo theme. Left = huge headline + italic
  * serif accent + a single premium button. Right = a real Calendly booking
  * widget inside a floating glass card, so the visitor books a strategy call
- * without ever leaving MotionOfAI.
+ * without ever leaving wenilo.
  *
- * Light theme (canvas white, ink type, MotionOfAI blue accent) — nothing
+ * Light theme (canvas white, ink type, wenilo blue accent) — nothing
  * touches the shared design system; section-specific colour lives inline /
  * in scoped classes.
  *
@@ -26,7 +27,7 @@ import { CALENDLY_URL } from '../../utils/constants';
 // design system (SF Pro / Inter) is not modified.
 const SERIF = "'Playfair Display', 'Cormorant Garamond', Georgia, 'Times New Roman', serif";
 
-// Official Calendly inline embed. Branding (white bg, ink text, MotionOfAI
+// Official Calendly inline embed. Branding (white bg, ink text, wenilo
 // blue) is passed as query params — the same mechanism the reference site
 // uses — so no react-calendly wrapper is involved.
 const CALENDLY_WIDGET_SRC = 'https://assets.calendly.com/assets/external/widget.js';
@@ -233,7 +234,7 @@ export default function AIVideoCTA() {
               Worth Watching?
             </h2>
 
-            {/* Luxury italic serif accent — MotionOfAI blue, soft glow. */}
+            {/* Luxury italic serif accent — wenilo blue, soft glow. */}
             <p
               data-reveal
               className="mt-5 italic text-accent"
@@ -337,24 +338,11 @@ export default function AIVideoCTA() {
       </div>
       </div>
 
-      {/* ── Giant full-bleed MotionOfAI wordmark, flush to the bottom.
-          Letters lighter at the top, darker MotionOfAI blue at the base —
-          echoing the wash rising up the page. ─────────────────────────── */}
-      <div data-reveal className="relative w-full select-none px-2 text-center">
-        <span
-          className="block font-display font-semibold leading-[0.8]"
-          style={{
-            fontSize: 'clamp(3rem, 17vw, 19rem)',
-            letterSpacing: '-0.045em',
-            backgroundImage: 'linear-gradient(180deg, #7aa2ff 0%, #2563eb 100%)',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
-            color: 'transparent',
-          }}
-        >
-          MotionOfAI
-        </span>
-      </div>
+      {/* ── Giant full-bleed wenilo wordmark, flush to the bottom. Fitted
+          edge-to-edge by BrandWordmark — the same signature that closes the
+          Home page. Letters lighter at the top, darker wenilo blue at the
+          base — echoing the wash rising up the page. ────────────────────── */}
+      <BrandWordmark data-reveal />
     </section>
   );
 }

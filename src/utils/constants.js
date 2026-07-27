@@ -5,13 +5,13 @@ import { cdnImg, cdnVid, cdnImgId } from '../config/cloudinary';
 import { HERO_FRAMES } from '../data/heroManifest';
 
 export const BRAND = {
-  name: 'MotionOfAI',
+  name: 'wenilo',
   promise: 'Get More Customers',
-  email: 'hello@motionofai.com',
+  email: 'hello@wenilo.com',
   socials: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com' },
     { label: 'Instagram', href: 'https://www.instagram.com' },
-    { label: 'Email', href: 'mailto:hello@motionofai.com' },
+    { label: 'Email', href: 'mailto:hello@wenilo.com' },
   ],
 };
 
@@ -27,7 +27,7 @@ export const CTA = {
   secondary: 'View Our Work',
 };
 
-// Single MotionOfAI booking event — every CTA opens THIS same Calendly form
+// Single wenilo booking event — every CTA opens THIS same Calendly form
 // (via the global popup, see contexts/CalendlyContext). Change it in one place.
 export const CALENDLY_URL = 'https://calendly.com/vaibhavchougule2512/30min';
 

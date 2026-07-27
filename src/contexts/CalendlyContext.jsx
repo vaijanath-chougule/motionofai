@@ -6,7 +6,7 @@ import { CALENDLY_URL } from '../utils/constants';
  * One global Calendly booking popup for the whole site. Every "Schedule a
  * Call" CTA (navbar, hero, final CTAs, voice-agent page) calls openCalendly()
  * and the SAME form opens as an in-page modal — the visitor never leaves
- * MotionOfAI. Single source of truth for the event URL (see CALENDLY_URL).
+ * wenilo. Single source of truth for the event URL (see CALENDLY_URL).
  *
  * The Calendly script + iframe only load the first time the modal opens, so
  * this costs nothing on initial page load.

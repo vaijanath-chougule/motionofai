@@ -140,8 +140,30 @@ export default function VoiceAgentPage() {
       // Per-scene triggers (not a linear scrub): when a scene activates the
       // sphere eases to that scene's position and then RESTS there until the
       // next scene triggers — the deliberate "arrive and settle" hold.
-      const setupJourney = (POS) => {
+      // will-change is a promise to the compositor, not a speed switch: every
+      // promoted element keeps a live texture for as long as the hint stands.
+      // The sphere and the phone are big, soft-shadowed, blurred subtrees, so
+      // holding three of those resident for the whole page costs real GPU
+      // memory on a phone — and memory pressure is what turns a smooth scrub
+      // into a stuttering one. So on mobile we promote only for the moments
+      // something is actually moving, then hand the memory back. Desktop keeps
+      // the permanent hint it has always had.
+      const promote = (el, value = 'transform') => {
+        if (el) el.style.willChange = value;
+      };
+      const release = (el) => {
+        if (el) el.style.willChange = 'auto';
+      };
+
+      const setupJourney = (POS, mobile) => {
         gsap.set(mover.current, POS[0]);
+
+        // Start from released on mobile; the JSX hint is the desktop default.
+        // The phone is deliberately NOT in this list — see onToggle below.
+        if (mobile) {
+          release(mover.current);
+          release(sphere.current);
+        }
 
         // True while the scrubbed finale owns the sphere. Scene moves must not
         // fire in this window — a discrete moveTo would overwrite the scrub
@@ -156,6 +178,14 @@ export default function VoiceAgentPage() {
             duration: 1.15,
             ease: 'power3.inOut', // ease-in-out = settle, no wall-bounce
             overwrite: 'auto',
+            onStart: mobile ? () => promote(mover.current) : undefined,
+            // Only release once this really is the last word — an overwritten
+            // tween must not strip the hint from the one that replaced it.
+            onComplete: mobile
+              ? () => {
+                  if (!gsap.isTweening(mover.current)) release(mover.current);
+                }
+              : undefined,
           });
 
         // Every scene EXCEPT the finale eases on enter and rests. The finale's
@@ -192,6 +222,17 @@ export default function VoiceAgentPage() {
               // never overwrite the scrub and stall the sphere near the phone.
               onToggle: (self) => {
                 finaleActive = self.isActive;
+                // Only the sphere's mover is cycled. Everything on the phone
+                // — its screen glow, its UI, the phone itself — keeps the
+                // promotion it has always had, because un-promoting a layer
+                // that contains text flips its antialiasing from grayscale
+                // back to subpixel. That is a visible change to the frame the
+                // visitor ends on, and measurement showed cycling those
+                // layers buys nothing. The sphere carries no text, so it can
+                // hand its memory back safely.
+                if (!mobile) return;
+                if (self.isActive) promote(mover.current);
+                else release(mover.current);
               },
             },
           })
@@ -206,8 +247,8 @@ export default function VoiceAgentPage() {
       };
 
       const mm = gsap.matchMedia();
-      mm.add('(min-width: 768px)', () => setupJourney(DESKTOP_POS));
-      mm.add('(max-width: 767px)', () => setupJourney(MOBILE_POS));
+      mm.add('(min-width: 768px)', () => setupJourney(DESKTOP_POS, false));
+      mm.add('(max-width: 767px)', () => setupJourney(MOBILE_POS, true));
     }, scene);
 
     ScrollTrigger.refresh();
@@ -334,7 +375,7 @@ export default function VoiceAgentPage() {
           {/* ===== 4 · WHY CHOOSE — sphere left ===== */}
           <Scene side="right" width="md:max-w-[48%]">
             <h2 data-reveal className="text-display-sm font-semibold text-ink opacity-0">
-              Why Choose MotionOfAI Voice Agent
+              Why Choose wenilo Voice Agent
             </h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
               {BENEFITS.map((b) => (
@@ -361,7 +402,7 @@ export default function VoiceAgentPage() {
                   {/* Phone-first: the copy sits above the rising phone on
                       mobile. The heading is small and sits just above the
                       sphere; the button drops beneath the phone (below the
-                      "MotionOfAI" label). Full size + layout return at sm/md. */}
+                      "wenilo" label). Full size + layout return at sm/md. */}
                   <div data-reveal className="max-w-[15rem] opacity-0 sm:max-w-xs">
                     <h2 className="text-base font-semibold text-ink sm:text-2xl md:text-display-sm">
                       Grow While You Sleep
@@ -603,7 +644,7 @@ const Phone = forwardRef(function Phone({ glowRef, uiRef }, ref) {
                 />
               ))}
             </div>
-            <p className="text-sm font-medium text-muted">MotionOfAI</p>
+            <p className="text-sm font-medium text-muted">wenilo</p>
           </div>
         </div>
       </div>

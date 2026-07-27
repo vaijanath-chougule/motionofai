@@ -141,7 +141,7 @@
      AI Video final-CTA — primary button. Follows the site's
      ink→accent primary pattern with an added soft elevation on
      hover (Apple easing, paint + transform only, no layout
-     thrash). Accent stays MotionOfAI blue.
+     thrash). Accent stays wenilo blue.
      ============================================================ */
   .cta-light-primary {
     color: #ffffff;
@@ -164,7 +164,7 @@
   /* ============================================================
      AI Video final-CTA — animated glass frame around the Calendly
      widget. A frosted panel whose gradient border slowly travels
-     (MotionOfAI blue ↔ light) with a periodic diagonal sheen
+     (wenilo blue ↔ light) with a periodic diagonal sheen
      sweeping across. Premium, subtle, 60fps. Honours reduced-motion
      (the global rule flattens both animations).
      ============================================================ */
@@ -285,6 +285,122 @@
     transform: translateX(-100%);
     animation: shimmer 4.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
     pointer-events: none;
+  }
+
+  /* ============================================================
+     Reel progress — wenilo's scroll indicator for the pinned film
+     reel (see ReelProgress.jsx). A frosted pill: 1px light hairline,
+     blurred white glass, soft blue outer glow, holding a 2px
+     electric-blue line with rounded ends — and nothing else: no
+     thumb, no marker, just the line.
+
+     Every animated property here is composited: the fill and its
+     blurred twin are driven by scaleX (transform-origin: left), and
+     the two glow layers by opacity alone.
+     Nothing animates width/left, so the reel never triggers layout
+     while scrubbing. Reduced-motion never mounts this (the reel
+     falls back to the vertical stack), so no opt-out is needed.
+     ============================================================ */
+  .reel-progress {
+    position: relative;
+    isolation: isolate;
+    border-radius: 999px;
+  }
+
+  .reel-progress__aura {
+    position: absolute;
+    inset: -16px -20px;
+    z-index: -1;
+    border-radius: 999px;
+    background: radial-gradient(
+      58% 130% at 50% 50%,
+      rgba(37, 99, 235, 0.34) 0%,
+      rgba(37, 99, 235, 0.12) 42%,
+      rgba(37, 99, 235, 0) 74%
+    );
+    filter: blur(12px);
+    opacity: 0.16;
+    pointer-events: none;
+    will-change: opacity;
+  }
+
+  .reel-progress__inner {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 11px 15px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.74) 0%,
+      rgba(255, 255, 255, 0.52) 100%
+    );
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    backdrop-filter: blur(18px) saturate(170%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 12px 34px -16px rgba(17, 17, 17, 0.22),
+      0 0 26px -8px rgba(37, 99, 235, 0.3);
+  }
+
+  .reel-progress__label {
+    flex: none;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, 0.42);
+  }
+
+  .reel-progress__track {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 88px;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(17, 17, 17, 0.1);
+  }
+
+  .reel-progress__fill,
+  .reel-progress__glow {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    transform-origin: 0% 50%;
+    transform: scale3d(0, 1, 1);
+  }
+
+  .reel-progress__fill {
+    background: linear-gradient(
+      90deg,
+      rgba(37, 99, 235, 0.5) 0%,
+      #2563eb 58%,
+      #7aa2ff 100%
+    );
+    will-change: transform;
+  }
+
+  /* The line's own halo — a blurred copy tracking the same scaleX. */
+  .reel-progress__glow {
+    background: #2563eb;
+    filter: blur(4px);
+    opacity: 0.2;
+    will-change: transform, opacity;
+  }
+
+  .reel-progress__count {
+    flex: none;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(17, 17, 17, 0.7);
+  }
+  .reel-progress__count-total {
+    color: rgba(17, 17, 17, 0.3);
   }
 
   /* Cinematic reel: the editorial text panel re-keys on each active project

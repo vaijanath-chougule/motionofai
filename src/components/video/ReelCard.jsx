@@ -9,11 +9,15 @@
  *   • bottom-left meta: category · title · duration
  *   • bottom-right project number  NN / TT
  *
+ * `minimal` strips the chrome back to the film's identity alone — category +
+ * title, nothing else. That is what phones use: the duration and the NN/TT
+ * counter would only compete with the reel's own progress indicator.
+ *
  * The actual player is injected via `media` so each context can supply the
- * right one — a scroll-controlled <ReelVideo> on desktop, an
- * IntersectionObserver <ResponsiveVideo> on mobile.
+ * right one — a scroll-controlled <ReelVideo> in the pinned reel, an
+ * IntersectionObserver <ResponsiveVideo> in the reduced-motion stack.
  */
-export default function ReelCard({ project, index, total, isActive = false, media }) {
+export default function ReelCard({ project, index, total, isActive = false, minimal = false, media }) {
   const num = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
 
@@ -72,19 +76,23 @@ export default function ReelCard({ project, index, total, isActive = false, medi
         <h3 className="font-display text-xl font-semibold leading-tight tracking-tight text-white md:text-2xl">
           {project.title}
         </h3>
-        <p className="mt-1 flex items-center gap-2 text-xs font-medium text-white/70">
-          <span className="inline-block h-1 w-1 rounded-full bg-accent" />
-          {project.duration}
-        </p>
+        {!minimal && (
+          <p className="mt-1 flex items-center gap-2 text-xs font-medium text-white/70">
+            <span className="inline-block h-1 w-1 rounded-full bg-accent" />
+            {project.duration}
+          </p>
+        )}
       </div>
 
       {/* Bottom-right project number. */}
-      <div className="absolute bottom-0 right-0 p-5 md:p-7">
-        <span className="font-display text-sm font-semibold tracking-tight text-white/90">
-          {num}
-          <span className="text-white/45"> / {tot}</span>
-        </span>
-      </div>
+      {!minimal && (
+        <div className="absolute bottom-0 right-0 p-5 md:p-7">
+          <span className="font-display text-sm font-semibold tracking-tight text-white/90">
+            {num}
+            <span className="text-white/45"> / {tot}</span>
+          </span>
+        </div>
+      )}
     </div>
   );
 }

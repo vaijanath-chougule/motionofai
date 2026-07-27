@@ -9,14 +9,16 @@ import MobileReel from '../video/MobileReel';
 
 /**
  * AI Video Production — the cinematic showreel. A pure-white, Apple-inspired
- * stage that plays MotionOfAI's five best AI productions like a premium film
+ * stage that plays wenilo's five best AI productions like a premium film
  * reel: one video commands the centre at a time.
  *
- *   • Desktop (fine pointer, motion allowed): a PINNED horizontal reel. Cards
- *     glide through the centre on scroll; the centred film plays while its
- *     neighbours shrink, soften and blur. (see CinematicReel)
- *   • Mobile / reduced-motion: the reel unfolds as a vertical stack, each
- *     video autoplaying only while on screen. (see MobileReel)
+ *   • Desktop AND mobile: the same PINNED horizontal reel. Cards glide
+ *     through the centre on scroll; the centred film plays while its
+ *     neighbours shrink, soften and blur. Phones get the identical
+ *     interaction — only the geometry and a wenilo progress pill differ.
+ *     (see CinematicReel)
+ *   • Reduced-motion only: the reel unfolds as a vertical stack, each video
+ *     autoplaying while on screen — nothing pins or scrubs. (see MobileReel)
  *
  * `id="ai-video"` owns the nav anchor and must be preserved. The header is
  * kept for brand + SEO; the redesign lives entirely below it.
@@ -25,7 +27,8 @@ export default function AIVideoProduction() {
   const scope = useRef(null);
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const reduce = prefersReducedMotion();
-  const pinned = !isMobile && !reduce;
+  // Phones pin too — only reduced-motion falls back to the vertical stack.
+  const pinned = !reduce;
 
   // Header reveal — film-cut fade up, matching the rest of the site.
   useIsomorphicLayoutEffect(() => {
@@ -83,10 +86,11 @@ export default function AIVideoProduction() {
         </header>
       </div>
 
-      {/* The reel. Desktop pins + scrubs; mobile stacks. */}
+      {/* The reel. Pins + scrubs on every device; stacks only for
+          reduced-motion visitors. */}
       <div className={pinned ? 'mt-10 md:mt-16' : 'mt-10 pb-8'}>
         {pinned ? (
-          <CinematicReel projects={FEATURED_REEL} />
+          <CinematicReel projects={FEATURED_REEL} mobile={isMobile} />
         ) : (
           <MobileReel projects={FEATURED_REEL} />
         )}
