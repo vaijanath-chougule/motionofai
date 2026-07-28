@@ -26,23 +26,112 @@ import { mergeRefs } from '../../utils/mergeRefs';
  * always rests on it) and pad the wrapper by exactly the overflow — the box
  * ends up hugging the ink, flush to the page edge with nothing cut.
  *
+ * BOTTOM EDGE — that spill goes both ways, and the wrapper has to answer both.
+ * "wenilo" has no descenders, so under the baseline there is only the tiny
+ * overshoot of the round letters, while the line box keeps its full descent
+ * room — leaving a blank band under the word and, since this is the last
+ * element on the page, under the page. How wide that band is depends on the
+ * face that resolved (SF Pro Display on Apple, Inter elsewhere), so it cannot
+ * be a constant: we ask the font itself, via canvas actualBoundingBoxDescent,
+ * how far the ink really goes, then pull the wrapper's bottom edge up to it
+ * with a negative margin. Nothing above the bottom edge moves.
+ *
  * Everything else is untouched: the typography, the gradient and the reveal
  * animation are the same as before — only the scale is computed instead of
  * hardcoded. `ref` and extra props (data-reveal) pass through to the wrapper
  * so each section keeps driving its own GSAP entrance.
  */
 
+const WORD = 'wenilo';
 const PROBE = 200; // px — arbitrary size used to learn the font's metrics
+// Descent is probed much larger: "wenilo" has no descenders, so the only ink
+// under the baseline is the overshoot of the round e/o — a fraction of a pixel
+// at PROBE, which rounds to noise. At 1000px it resolves cleanly.
+const DESCENT_PROBE = 1000;
 const FILL = 0.995; // leave a sliver so subpixel rounding can never clip
 const LEADING = 0.8; // matches leading-[0.8] below
-// Round letters (e, o) dip a hair below the baseline. Cheap, font-agnostic
-// allowance so the overshoot is never the thing that gets clipped.
+// Round letters (e, o) dip a hair below the baseline. Fallback for engines
+// that don't report usable ink metrics, and the sanity band we accept a
+// measured value within — a no-descender word can't be outside it.
 const OVERSHOOT = 0.022;
+const OVERSHOOT_MIN = 0.004;
+const OVERSHOOT_MAX = 0.06;
 // Ceiling for how much of the viewport height the wordmark's own line box may
 // take. Only bites on short/landscape windows, where a width-driven fit would
 // otherwise fill the screen.
 const MAX_VH = 0.5;
 const MIN_PX = 44;
+
+/**
+ * How far the ink of WORD reaches below the baseline, as a fraction of the
+ * font size, for whatever face actually resolved.
+ *
+ * Rasterises the word with its baseline on the strip's top edge, so the strip
+ * contains exactly the sub-baseline ink, and scans up for the lowest row with
+ * any coverage at all (alpha > 0, so antialiased edges count). That is the
+ * literal answer to "where does the logo stop", which is what the bottom edge
+ * has to sit on.
+ *
+ * TextMetrics is kept only as a fallback. It is the tidier API but the wrong
+ * number: actualBoundingBoxDescent reads ~40% deeper than the ink really goes
+ * (0.0156 vs 0.011 for this stack), which at display sizes leaves a visible
+ * band of blank under the word — the exact thing this is here to remove.
+ *
+ * Both a zero reading (engines reporting no ink for a word with no descenders)
+ * and a wild one (a canvas that silently kept its default font) fall outside
+ * the sanity band and are rejected, because trusting either would pull the
+ * wrapper's bottom edge up through the letters and the section's
+ * overflow-hidden would shear them.
+ */
+function measureDescentRatio(cs) {
+  try {
+    const canvas = document.createElement('canvas');
+    const g = canvas.getContext('2d', { willReadFrequently: true });
+    if (!g) return OVERSHOOT;
+
+    const font = `${cs.fontStyle} ${cs.fontWeight} ${DESCENT_PROBE}px ${cs.fontFamily}`;
+    g.font = font;
+    // If the assignment didn't take, the context is still on its default font
+    // and every measurement below would describe the wrong typeface.
+    if (!g.font.includes(`${DESCENT_PROBE}px`)) return OVERSHOOT;
+    g.textBaseline = 'alphabetic';
+
+    const metrics = g.measureText(WORD);
+    const reported = metrics.actualBoundingBoxDescent / DESCENT_PROBE;
+
+    // Only the band just under the baseline can hold ink, so only that is
+    // rasterised — a short strip, not a full-size canvas.
+    const band = Math.ceil(DESCENT_PROBE * OVERSHOOT_MAX) + 4;
+    const width = Math.ceil(metrics.width) + 8;
+    canvas.width = width;
+    canvas.height = band;
+    // Resizing a canvas resets its context, so restate what matters.
+    g.font = font;
+    g.textBaseline = 'alphabetic';
+    g.fillStyle = '#000';
+    g.fillText(WORD, 4, 0); // baseline at y=0 — the strip IS the sub-baseline band
+
+    const { data } = g.getImageData(0, 0, width, band);
+    let lowest = -1;
+    for (let y = band - 1; y >= 0 && lowest < 0; y--) {
+      for (let x = 0; x < width; x++) {
+        if (data[(y * width + x) * 4 + 3] > 0) {
+          lowest = y;
+          break;
+        }
+      }
+    }
+
+    // +1 because `lowest` is a row index and the ink's edge is that row's far
+    // side; the strip's own top row is the baseline itself.
+    const scanned = (lowest + 1) / DESCENT_PROBE;
+    if (scanned >= OVERSHOOT_MIN && scanned <= OVERSHOOT_MAX) return scanned;
+    if (reported >= OVERSHOOT_MIN && reported <= OVERSHOOT_MAX) return reported;
+    return OVERSHOOT;
+  } catch {
+    return OVERSHOOT;
+  }
+}
 
 const BrandWordmark = forwardRef(function BrandWordmark(
   { className = '', ...rest },
@@ -53,6 +142,7 @@ const BrandWordmark = forwardRef(function BrandWordmark(
   const textRef = useRef(null);
   const strutRef = useRef(null); // zero-height inline-block: sits on the baseline
   const ratioRef = useRef(0); // glyph width per 1px of font-size
+  const fontRef = useRef(''); // which face the width ratio above was learnt from
   const lastRef = useRef({ w: 0, h: 0 });
 
   const fit = useCallback(() => {
@@ -61,7 +151,24 @@ const BrandWordmark = forwardRef(function BrandWordmark(
     const text = textRef.current;
     if (!wrap || !box || !text) return;
 
-    // Learn the font's advance width once — it is a constant of the typeface.
+    // Start every pass from a neutral bottom edge. The pull-up below changes
+    // the section's height, and in a flex column that can reposition this very
+    // element — measuring while a previous pass's margin is still applied lets
+    // that feed back into the next result, so the two never settle.
+    wrap.style.marginBottom = '0px';
+
+    // The advance width is a constant of the typeface, so it is learnt once —
+    // but "once per typeface". The display stack resolves differently per
+    // platform, so if the resolved face changed underneath us the cached value
+    // describes the wrong font and has to go.
+    const cs = getComputedStyle(text);
+    const fontKey = `${cs.fontStyle}|${cs.fontWeight}|${cs.fontFamily}`;
+    if (fontRef.current !== fontKey) {
+      fontRef.current = fontKey;
+      ratioRef.current = 0;
+    }
+
+    // Learn the font's advance width.
     if (!ratioRef.current) {
       wrap.style.paddingTop = '0px';
       wrap.style.paddingBottom = '0px';
@@ -73,23 +180,37 @@ const BrandWordmark = forwardRef(function BrandWordmark(
       ratioRef.current = w / PROBE;
     }
 
+    // The ink's reach below the baseline decides where the box may end, so it
+    // is re-measured every pass rather than cached. Caching it was a real bug:
+    // the webfont swap keeps the family string identical and only changes the
+    // file underneath, so a stale value survived the swap and the box was
+    // pulled up by the wrong font's overshoot — flush on one page, a sheared
+    // letter on the other. One canvas measurement per fit is nothing, and fits
+    // are rare.
+    const descent = measureDescentRatio(cs);
+
     const byWidth = (box.clientWidth * FILL) / ratioRef.current;
     const byHeight = (window.innerHeight * MAX_VH) / LEADING;
     const size = Math.max(MIN_PX, Math.min(byWidth, byHeight));
     text.style.fontSize = `${size}px`;
 
-    // Now pad the wrapper by however far the ink spills past the line box, so
-    // the giant type sits flush to the page edge without being sheared.
+    // Now settle the wrapper's edges onto the ink. The top pads out however
+    // far the ascenders spill past the line box; the bottom works in both
+    // directions — pad when the ink spills below the box, pull the box up when
+    // the box ends below the ink (which is the usual case here: no
+    // descenders). floor() on the pull-up trims a hair less than the blank, so
+    // rounding can never eat into a glyph.
     const line = text.getBoundingClientRect();
     const range = document.createRange();
     range.selectNodeContents(text);
     const content = range.getBoundingClientRect(); // ascent + descent band
     const baseline = strutRef.current?.getBoundingClientRect().top ?? line.bottom;
 
-    const below = baseline + size * OVERSHOOT - line.bottom;
+    const below = baseline + size * descent - line.bottom;
     const above = line.top - content.top;
     wrap.style.paddingTop = `${Math.max(0, Math.ceil(above))}px`;
     wrap.style.paddingBottom = `${Math.max(0, Math.ceil(below))}px`;
+    wrap.style.marginBottom = below < 0 ? `${-Math.floor(-below)}px` : '0px';
   }, []);
 
   // Fit before paint, so the wordmark never renders at the wrong size.
@@ -123,8 +244,8 @@ const BrandWordmark = forwardRef(function BrandWordmark(
     window.addEventListener('resize', onResize);
 
     // The webfont can swap in after first paint (Inter on non-Apple
-    // platforms) — that changes the metrics, so drop the cached ratio and
-    // solve again.
+    // platforms) without changing the family string, so fit() cannot detect
+    // that one on its own — drop the cached width ratio and solve again.
     document.fonts?.ready?.then(() => {
       ratioRef.current = 0;
       fit();
@@ -159,7 +280,7 @@ const BrandWordmark = forwardRef(function BrandWordmark(
             color: 'transparent',
           }}
         >
-          wenilo
+          {WORD}
           {/* Baseline probe: a zero-sized inline-block rests exactly on the
               baseline, which is what the padding maths needs. Invisible and
               zero-width, so it changes neither the layout nor the metrics. */}

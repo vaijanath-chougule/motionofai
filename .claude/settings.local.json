@@ -36,7 +36,16 @@
       "Bash(git stash *)",
       "Bash(cp -r dist dist-base)",
       "Read(//tmp/**)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Read(//e/repos/**)",
+      "Read(//tmp/claude-1000/d--Businesses-1--3D-websites-MotionofAI/0647b942-dfbb-904e-8b44-16342a974873/scratchpad/**)",
+      "Bash(node scripts/measure-wordmark-gap.mjs)",
+      "Bash(node scripts/measure-wordmark-ink.mjs)",
+      "Bash(node scripts/sweep-wordmark.mjs)",
+      "Bash(node scripts/check-wordmark-gap.mjs)",
+      "Bash(node scripts/probe-descent.mjs)",
+      "Bash(node scripts/trace-wordmark.mjs)",
+      "Bash(node scripts/verify-wordmark.mjs)"
     ]
   }
 }
