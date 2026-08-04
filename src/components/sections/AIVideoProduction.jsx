@@ -4,6 +4,7 @@ import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect
 import { useMediaQuery, MOBILE_QUERY } from '../../hooks/useMediaQuery';
 import { prefersReducedMotion } from '../../utils/device';
 import { FEATURED_REEL } from '../../data/videoPortfolio';
+import Typewriter from '../motion/Typewriter';
 import CinematicReel from '../video/CinematicReel';
 import MobileReel from '../video/MobileReel';
 
@@ -80,7 +81,8 @@ export default function AIVideoProduction() {
           <h2 data-reveal className="text-display-md font-semibold leading-[1.05] text-ink">
             Visual Content That{' '}
             <span className="lg:whitespace-nowrap">
-              <span className="text-accent">Gets Attention.</span> 100% AI generated
+              <span className="text-accent">Gets Attention.</span>{' '}
+              <Typewriter text="100% AI generated" />
             </span>
           </h2>
         </header>

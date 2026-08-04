@@ -8,3 +8,7 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Local video optimization workspace (multi-hundred-MB media, never committed)
+.video-src/
+optimized-videos/

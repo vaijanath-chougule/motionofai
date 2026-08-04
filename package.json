@@ -9,11 +9,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "frames:webp": "node scripts/convert-frames.mjs",
-    "frames:manifest": "node --env-file=.env scripts/build-hero-manifest.mjs"
+    "frames:manifest": "node scripts/build-hero-manifest.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.6",
     "@react-three/fiber": "^9.1.0",
+    "framer-motion": "^12.43.0",
     "gsap": "^3.12.7",
     "lenis": "^1.1.20",
     "lucide-react": "^0.469.0",

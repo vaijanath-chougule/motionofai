@@ -19,7 +19,8 @@ import { useCalendly } from '../../contexts/CalendlyContext';
  * wenilo wordmark flush to the bottom — the exact treatment used to
  * close the AI Video Production page. Anchors #contact.
  *
- * Contacts are placeholders (not links yet). Phone uses a Lucide outline
+ * Each contact links out (LinkedIn is still a placeholder — no href yet).
+ * Phone uses a Lucide outline
  * glyph; the social platforms use their official react-icons brand SVGs.
  * The row is a true CSS grid — 7 equal columns on desktop, 4 on tablet, 2
  * on mobile — so every icon shares one baseline and every column is equal
@@ -28,13 +29,36 @@ import { useCalendly } from '../../contexts/CalendlyContext';
  * the item lifts + scales. The row fades + rises in on view, 80ms stagger.
  */
 const CONTACTS = [
-  { Icon: Phone, label: '8600186550', brand: false },
-  { Icon: FaInstagram, label: 'Instagram', brand: true },
-  { Icon: FaWhatsapp, label: 'WhatsApp', brand: true },
+  { Icon: Phone, label: '8600186550', brand: false, href: 'tel:+918600186550' },
+  {
+    Icon: FaInstagram,
+    label: 'Instagram',
+    brand: true,
+    href: 'https://www.instagram.com/wenilo.ai?utm_source=qr&igsh=aGV4NXYzeDh0MGIx',
+    external: true,
+  },
+  {
+    Icon: FaWhatsapp,
+    label: 'WhatsApp',
+    brand: true,
+    href: "https://wa.me/918600186550?text=Hi%20Wenilo!%20I%27m%20interested%20in%20your%20services.%20I%27d%20love%20to%20discuss%20my%20project.%20Could%20we%20connect%3F",
+    external: true,
+  },
   { Icon: FaLinkedin, label: 'LinkedIn', brand: true },
-  { Icon: FaYoutube, label: 'YouTube', brand: true },
-  { Icon: MdEmail, label: 'Email', brand: true },
-  { Icon: FaXTwitter, label: 'X', brand: true },
+  {
+    Icon: FaYoutube,
+    label: 'YouTube',
+    brand: true,
+    href: 'https://youtube.com/@wenilo?si=fUTwPM5mQ7byyOGg',
+    external: true,
+  },
+  {
+    Icon: MdEmail,
+    label: 'weniloai@gmail.com',
+    brand: true,
+    href: 'mailto:weniloai@gmail.com?subject=Project%20Inquiry&body=Hi%20Wenilo,%0A%0AI%20would%20like%20to%20discuss%20my%20project.',
+  },
+  { Icon: FaXTwitter, label: 'X', brand: true, href: 'https://x.com/wenilo', external: true },
 ];
 
 export default function FinalCTA() {
@@ -140,23 +164,38 @@ export default function FinalCTA() {
           ref={contactRef}
           className="mx-auto mt-14 grid w-full max-w-[950px] grid-cols-2 gap-x-6 gap-y-12 sm:mt-16 sm:grid-cols-4 sm:gap-y-14 lg:grid-cols-7"
         >
-          {CONTACTS.map(({ Icon, label, brand }) => (
-            <li
-              key={label}
-              className="contact-item group flex min-w-0 cursor-pointer flex-col items-center justify-center gap-2.5 transition-all duration-[350ms] ease-out will-change-transform hover:-translate-y-[3px] hover:scale-[1.08]"
-            >
-              <span className="flex h-6 items-center justify-center">
-                <Icon
-                  className="h-6 w-6 text-ink/80 transition-colors duration-[350ms] ease-out group-hover:text-accent"
-                  strokeWidth={brand ? undefined : 1.5}
-                  aria-hidden="true"
-                />
-              </span>
-              <span className="whitespace-nowrap text-sm font-medium tracking-[0.02em] text-ink/75 transition-colors duration-[350ms] ease-out group-hover:text-accent">
-                {label}
-              </span>
-            </li>
-          ))}
+          {CONTACTS.map(({ Icon, label, brand, href, external }) => {
+            // Icon + label share one hit area: the <a> wraps both and inherits
+            // the item's column layout, so nothing about the visual changes.
+            const Inner = href ? 'a' : 'div';
+            const linkProps = href
+              ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+              : {};
+
+            return (
+              <li
+                key={label}
+                className="contact-item group flex min-w-0 cursor-pointer flex-col items-center justify-center gap-2.5 transition-all duration-[350ms] ease-out will-change-transform hover:-translate-y-[3px] hover:scale-[1.08]"
+              >
+                <Inner
+                  {...linkProps}
+                  aria-label={label}
+                  className="flex min-w-0 flex-col items-center justify-center gap-2.5"
+                >
+                  <span className="flex h-6 items-center justify-center">
+                    <Icon
+                      className="h-6 w-6 text-ink/80 transition-colors duration-[350ms] ease-out group-hover:text-accent"
+                      strokeWidth={brand ? undefined : 1.5}
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span className="whitespace-nowrap text-sm font-medium tracking-[0.02em] text-ink/75 transition-colors duration-[350ms] ease-out group-hover:text-accent">
+                    {label}
+                  </span>
+                </Inner>
+              </li>
+            );
+          })}
         </ul>
 
         <div className="reveal mt-16">

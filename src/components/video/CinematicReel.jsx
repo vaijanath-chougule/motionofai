@@ -3,6 +3,7 @@ import { gsap, ScrollTrigger } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import ReelCard from './ReelCard';
 import ReelProgress from './ReelProgress';
+import ReelShowcase from './ReelShowcase';
 import ReelVideo from './ReelVideo';
 
 /**
@@ -171,26 +172,39 @@ export default function CinematicReel({ projects, mobile = false }) {
                   : 'absolute left-1/2 top-[calc(50%+40px)] h-[78svh] max-h-[900px] w-[min(92vw,1720px)] will-change-transform'
               }
             >
-              <ReelCard
-                project={project}
-                index={i}
-                total={n}
-                isActive={i === active}
-                // Phones show the film and nothing but its identity:
-                // category + title. No duration, no NN/TT counter — that
-                // lives in the progress pill instead.
-                minimal={mobile}
-                media={
-                  <ReelVideo
-                    desktopSrc={project.desktopVideo}
-                    mobileSrc={project.mobileVideo}
-                    poster={project.poster}
-                    label={project.category}
-                    near={near.has(i)}
-                    active={i === active}
-                  />
-                }
-              />
+              {/* A slot flagged `variant: 'reels'` holds a collection of
+                  vertical 9:16 films instead of one landscape card. The slot
+                  geometry above is identical either way, so the reel's step
+                  measurement, scrub and pin are completely unaffected. */}
+              {project.variant === 'reels' ? (
+                <ReelShowcase
+                  project={project}
+                  near={near.has(i)}
+                  active={i === active}
+                  mobile={mobile}
+                />
+              ) : (
+                <ReelCard
+                  project={project}
+                  index={i}
+                  total={n}
+                  isActive={i === active}
+                  // Phones show the film and nothing but its identity:
+                  // category + title. No duration, no NN/TT counter — that
+                  // lives in the progress pill instead.
+                  minimal={mobile}
+                  media={
+                    <ReelVideo
+                      desktopSrc={project.desktopVideo}
+                      mobileSrc={project.mobileVideo}
+                      poster={project.poster}
+                      label={project.category}
+                      near={near.has(i)}
+                      active={i === active}
+                    />
+                  }
+                />
+              )}
             </div>
           ))}
         </div>

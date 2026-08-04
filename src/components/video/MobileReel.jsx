@@ -1,5 +1,6 @@
 import ResponsiveVideo from '../media/ResponsiveVideo';
 import ReelCard from './ReelCard';
+import ReelShowcase from './ReelShowcase';
 
 /**
  * MobileReel — the reduced-motion fallback. Nothing pins and nothing scrubs,
@@ -21,28 +22,39 @@ export default function MobileReel({ projects }) {
 
   return (
     <div className="flex flex-col gap-12 px-5">
-      {projects.map((project, i) => (
-        <article key={project.id} className="reveal">
-          <div className="relative aspect-[4/5] w-full">
-            <ReelCard
-              project={project}
-              index={i}
-              total={n}
-              isActive
-              minimal
-              media={
-                <ResponsiveVideo
-                  desktopSrc={project.desktopVideo}
-                  mobileSrc={project.mobileVideo}
-                  poster={project.poster}
-                  label={project.category}
-                  className="h-full w-full"
-                />
-              }
-            />
-          </div>
-        </article>
-      ))}
+      {projects.map((project, i) =>
+        // The vertical-collection slot keeps its own 9:16 frame here too, one
+        // reel at a time with a swipe between them — nothing animates, so it
+        // stays within the reduced-motion contract.
+        project.variant === 'reels' ? (
+          <article key={project.id} className="reveal">
+            <div className="relative mx-auto aspect-[9/16] w-full max-w-[76vw]">
+              <ReelShowcase project={project} near active mobile />
+            </div>
+          </article>
+        ) : (
+          <article key={project.id} className="reveal">
+            <div className="relative aspect-[4/5] w-full">
+              <ReelCard
+                project={project}
+                index={i}
+                total={n}
+                isActive
+                minimal
+                media={
+                  <ResponsiveVideo
+                    desktopSrc={project.desktopVideo}
+                    mobileSrc={project.mobileVideo}
+                    poster={project.poster}
+                    label={project.category}
+                    className="h-full w-full"
+                  />
+                }
+              />
+            </div>
+          </article>
+        ),
+      )}
     </div>
   );
 }

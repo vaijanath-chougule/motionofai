@@ -16,8 +16,22 @@
  * The actual player is injected via `media` so each context can supply the
  * right one — a scroll-controlled <ReelVideo> in the pinned reel, an
  * IntersectionObserver <ResponsiveVideo> in the reduced-motion stack.
+ *
+ * `actions` is an optional interactive slot pinned to the top-right of the
+ * surface, above every scrim and sheen (the vertical showcase puts its sound
+ * toggle there). It is the ONLY part of the card that takes pointer events.
  */
-export default function ReelCard({ project, index, total, isActive = false, minimal = false, media }) {
+export default function ReelCard({
+  project,
+  index,
+  total,
+  isActive = false,
+  minimal = false,
+  showDuration = true,
+  showCounter = true,
+  media,
+  actions = null,
+}) {
   const num = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
 
@@ -68,15 +82,35 @@ export default function ReelCard({ project, index, total, isActive = false, mini
         </span>
       </div>
 
+      {/* Interactive slot — sits above the scrim/sheen/glyph stack. */}
+      {actions && (
+        <div data-reel-action className="absolute right-0 top-0 z-20 p-4 md:p-5">
+          {actions}
+        </div>
+      )}
+
       {/* Bottom-left meta. */}
       <div className="absolute bottom-0 left-0 max-w-[80%] p-5 md:p-7">
-        <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70 md:text-[11px]">
+        {/* The data-* hooks below carry no styling. They let a parent motion
+            layer (see FocusGallery) animate the meta on hover without reaching
+            into this component's class names or structure. */}
+        <p
+          data-reel-eyebrow
+          className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70 md:text-[11px]"
+        >
           {project.category}
         </p>
-        <h3 className="font-display text-xl font-semibold leading-tight tracking-tight text-white md:text-2xl">
+        <h3
+          data-reel-title
+          className="font-display text-xl font-semibold leading-tight tracking-tight text-white md:text-2xl"
+        >
           {project.title}
         </h3>
-        {!minimal && (
+        {/* Runtime line — accent bullet + duration, as one unit. `showDuration`
+            drops the whole row rather than blanking it, so cards without a
+            runtime (the vertical showcase) end at the title with no orphan
+            bullet and no leftover `mt-1` gutter beneath it. */}
+        {!minimal && showDuration && project.duration && (
           <p className="mt-1 flex items-center gap-2 text-xs font-medium text-white/70">
             <span className="inline-block h-1 w-1 rounded-full bg-accent" />
             {project.duration}
@@ -84,8 +118,9 @@ export default function ReelCard({ project, index, total, isActive = false, mini
         )}
       </div>
 
-      {/* Bottom-right project number. */}
-      {!minimal && (
+      {/* Bottom-right project number. Absolutely positioned, so opting out via
+          `showCounter` leaves no gap behind — the meta block is unaffected. */}
+      {!minimal && showCounter && (
         <div className="absolute bottom-0 right-0 p-5 md:p-7">
           <span className="font-display text-sm font-semibold tracking-tight text-white/90">
             {num}

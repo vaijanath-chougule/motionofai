@@ -301,6 +301,79 @@
      while scrubbing. Reduced-motion never mounts this (the reel
      falls back to the vertical stack), so no opt-out is needed.
      ============================================================ */
+  /* ============================================================
+     Typewriter.
+
+     Characters are always present and always laid out; only `visibility`
+     changes, so the phrase holds its full width from the first frame and the
+     heading never reflows. Inheriting every type property means the effect is
+     invisible to the surrounding typography.
+
+     The caret is an ::after on the boundary character — absolutely positioned,
+     so it takes no space and cannot nudge the text as it advances.
+     ============================================================ */
+  .typewriter__char {
+    position: relative;
+    visibility: hidden;
+    white-space: pre;
+  }
+
+  .typewriter__char.is-caret-after::after,
+  .typewriter__char.is-caret-before::after {
+    content: '|';
+    position: absolute;
+    top: 0;
+    font-weight: 300;
+    /* The caret itself is never hidden by the reveal. */
+    visibility: visible;
+    animation: typewriter-blink 1s steps(1, end) infinite;
+  }
+
+  .typewriter__char.is-caret-after::after {
+    left: 100%;
+  }
+
+  .typewriter__char.is-caret-before::after {
+    right: 100%;
+  }
+
+  @keyframes typewriter-blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* ============================================================
+     Focus-gallery meta response.
+
+     `--reel-focus` is written by FocusGallery on the card wrapper as an
+     ALREADY-SPRUNG MotionValue (0 → 1 as a card becomes the hero). These rules
+     just read it, so the motion is the same JS spring driving the card itself
+     — no CSS transition, no second timeline to fall out of sync.
+
+     Custom properties inherit, so nothing here needs to know ReelCard's
+     structure beyond the three data-* hooks. Only transforms are touched, so
+     the meta block never reflows.
+     ============================================================ */
+  [data-reel-focus] [data-reel-title] {
+    transform: scale(calc(1 + var(--reel-focus, 0) * 0.1));
+    transform-origin: left bottom;
+  }
+
+  [data-reel-focus] [data-reel-eyebrow] {
+    transform: translateY(calc(var(--reel-focus, 0) * -5px));
+  }
+
+  [data-reel-focus] [data-reel-action] {
+    transform: scale(calc(1 + var(--reel-focus, 0) * 0.12));
+    transform-origin: top right;
+  }
+
   .reel-progress {
     position: relative;
     isolation: isolate;

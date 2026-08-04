@@ -5,9 +5,9 @@
 // Components NEVER hardcode videos — they map over this data.
 //
 // To add a future project:
-//   1. Upload to Cloudinary under MotionOfAI/<Category>/{desktop,mobile}/
+//   1. Upload to Cloudflare R2 under website/{desktop,mobile}-assets/
 //      as <slug>.mp4 (+ <slug>-poster.webp for the poster).
-//   2. Add one object to VIDEO_PORTFOLIO below via cdnVid()/cdnImg().
+//   2. Add one object to VIDEO_PORTFOLIO below via desktopAsset()/mobileAsset().
 // No component changes are required.
 //
 // Responsive split mirrors the Hero: ResponsiveVideo resolves
@@ -18,7 +18,7 @@
 // player, zero layout shift.
 // ============================================================
 
-import { cdnImg, cdnVid } from '../config/cloudinary';
+import { desktopAsset, mobileAsset, reelAsset } from '../config/assets';
 
 // Column-level copy + destination. Fixed per the section design;
 // the scalable, growable part is VIDEO_PORTFOLIO below.
@@ -51,18 +51,18 @@ export const VIDEO_PORTFOLIO = [
     id: 'ad-01',
     title: 'Product Launch Spot',
     category: 'advertisements',
-    desktopVideo: cdnVid('AIVideoProduction/desktop/ad-01.mp4'),
-    mobileVideo: cdnVid('AIVideoProduction/mobile/ad-01.mp4'),
-    poster: cdnImg('AIVideoProduction/desktop/ad-01-poster.webp'),
+    desktopVideo: desktopAsset('ad-01.mp4'),
+    mobileVideo: mobileAsset('ad-01.mp4'),
+    poster: desktopAsset('ad-01-poster.webp'),
     portfolioUrl: '/portfolio/ai-advertisements',
   },
   {
     id: 'film-01',
     title: 'Luxury Brand Film',
     category: 'cinematic',
-    desktopVideo: cdnVid('AICinematic/desktop/film-01.mp4'),
-    mobileVideo: cdnVid('AICinematic/mobile/film-01.mp4'),
-    poster: cdnImg('AICinematic/desktop/film-01-poster.webp'),
+    desktopVideo: desktopAsset('film-01.mp4'),
+    mobileVideo: mobileAsset('film-01.mp4'),
+    poster: desktopAsset('film-01-poster.webp'),
     portfolioUrl: '/portfolio/ai-cinematic',
   },
 ];
@@ -74,24 +74,64 @@ export const getFeaturedVideo = (categoryKey) =>
 // ============================================================
 // FEATURED_REEL — the five showcase projects driving the cinematic,
 // pinned "film reel" on /ai-video-production. Order = scroll order.
-// Each object is one project card. Assets follow the same Cloudinary
+// Each object is one project card. Assets follow the same R2
 // convention as VIDEO_PORTFOLIO:
-//   MotionOfAI/AIVideoProduction/{desktop,mobile}/reel-0N.mp4
-//   MotionOfAI/AIVideoProduction/desktop/reel-0N-poster.webp
+//   website/{desktop,mobile}-assets/reel-0N.mp4
+//   website/desktop-assets/reel-0N-poster.webp
 // Until the real files exist, each card degrades to the elegant studio
 // placeholder (ResponsiveVideo / ReelVideo) — never a broken player.
 // ============================================================
 export const FEATURED_REEL = [
   {
     id: 'reel-01',
-    title: 'Neon Pulse',
-    category: 'AI Advertisement',
+    title: 'Nimantran Stories',
+    category: 'Wedding Invitation',
     description:
-      'A luxury commercial crafted entirely with AI to maximise attention and conversions.',
+      'A collection of luxury AI wedding invitations, cut as vertical films.',
     duration: '0:32',
-    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-01.mp4'),
-    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-01.mp4'),
-    poster: cdnImg('AIVideoProduction/desktop/reel-01-poster.webp'),
+    // `variant: 'reels'` swaps this ONE slot from a single landscape film to
+    // the five-up vertical showcase (see ReelShowcase). Every other entry
+    // below is untouched and still renders the standard landscape ReelCard.
+    // Each child inherits `category` / `title` from the parent unless it
+    // overrides them, so renaming the collection is a one-line change.
+    variant: 'reels',
+    reels: [
+      {
+        // Live film. The source sits OUTSIDE the website/ prefix that
+        // desktopAsset()/mobileAsset() build, so the R2 URL is given in full
+        // and used directly — nothing is proxied or re-hosted.
+        // The showcase renders no runtimes (ReelCard `showDuration={false}`),
+        // so no `duration` is carried here or on any sibling below.
+        id: 'nimantran-01',
+        title: 'Mahesh & Sakshi',
+        desktopVideo: reelAsset('desktop', '01/0404%20(1).mp4'),
+        mobileVideo: reelAsset('mobile', '01/0404%20(1).mp4'),
+      },
+      {
+        id: 'nimantran-02',
+        title: 'Ethen & Grace',
+        desktopVideo: reelAsset('desktop', '02/2k.mp4'),
+        mobileVideo: reelAsset('mobile', '02/2k.mp4'),
+      },
+      {
+        id: 'nimantran-03',
+        title: 'Arjun & Ananya',
+        desktopVideo: reelAsset('desktop', '03/Panjabi.mp4'),
+        mobileVideo: reelAsset('mobile', '03/Panjabi.mp4'),
+      },
+      {
+        id: 'nimantran-04',
+        title: 'Rakesh & Arpita',
+        desktopVideo: reelAsset('desktop', '04/4.mp4'),
+        mobileVideo: reelAsset('mobile', '04/4.mp4'),
+      },
+      {
+        id: 'nimantran-05',
+        title: 'Rahul & Priya',
+        desktopVideo: reelAsset('desktop', '05/Rahul%20%26%20Priya.mp4'),
+        mobileVideo: reelAsset('mobile', '05/Rahul%20%26%20Priya.mp4'),
+      },
+    ],
   },
   {
     id: 'reel-02',
@@ -100,9 +140,9 @@ export const FEATURED_REEL = [
     description:
       'A gold-lit product film where every reflection and highlight is AI-rendered to perfection.',
     duration: '0:28',
-    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-02.mp4'),
-    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-02.mp4'),
-    poster: cdnImg('AIVideoProduction/desktop/reel-02-poster.webp'),
+    desktopVideo: desktopAsset('reel-02.mp4'),
+    mobileVideo: mobileAsset('reel-02.mp4'),
+    poster: desktopAsset('reel-02-poster.webp'),
   },
   {
     id: 'reel-03',
@@ -111,9 +151,9 @@ export const FEATURED_REEL = [
     description:
       "A brand's founding myth retold as cinematic, emotionally-charged AI storytelling.",
     duration: '0:45',
-    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-03.mp4'),
-    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-03.mp4'),
-    poster: cdnImg('AIVideoProduction/desktop/reel-03-poster.webp'),
+    desktopVideo: desktopAsset('reel-03.mp4'),
+    mobileVideo: mobileAsset('reel-03.mp4'),
+    poster: desktopAsset('reel-03-poster.webp'),
   },
   {
     id: 'reel-04',
@@ -122,9 +162,9 @@ export const FEATURED_REEL = [
     description:
       'A couture campaign styled, shot and lit entirely by generative AI.',
     duration: '0:38',
-    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-04.mp4'),
-    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-04.mp4'),
-    poster: cdnImg('AIVideoProduction/desktop/reel-04-poster.webp'),
+    desktopVideo: desktopAsset('reel-04.mp4'),
+    mobileVideo: mobileAsset('reel-04.mp4'),
+    poster: desktopAsset('reel-04-poster.webp'),
   },
   {
     id: 'reel-05',
@@ -133,8 +173,8 @@ export const FEATURED_REEL = [
     description:
       'A short cinematic journey proving generative AI can genuinely move an audience.',
     duration: '0:52',
-    desktopVideo: cdnVid('AIVideoProduction/desktop/reel-05.mp4'),
-    mobileVideo: cdnVid('AIVideoProduction/mobile/reel-05.mp4'),
-    poster: cdnImg('AIVideoProduction/desktop/reel-05-poster.webp'),
+    desktopVideo: desktopAsset('reel-05.mp4'),
+    mobileVideo: mobileAsset('reel-05.mp4'),
+    poster: desktopAsset('reel-05-poster.webp'),
   },
 ];
