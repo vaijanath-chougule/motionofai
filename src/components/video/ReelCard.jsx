@@ -19,7 +19,12 @@
  *
  * `actions` is an optional interactive slot pinned to the top-right of the
  * surface, above every scrim and sheen (the vertical showcase puts its sound
- * toggle there). It is the ONLY part of the card that takes pointer events.
+ * toggle there). It is the ONLY part of the card that takes pointer events
+ * via the top-right slot.
+ *
+ * `bottomActions` is an optional slot rendered ABOVE the category eyebrow in
+ * the bottom-left meta block. Cards 2–5 use this for the audio button so it
+ * sits naturally in the information hierarchy rather than floating top-right.
  */
 export default function ReelCard({
   project,
@@ -31,6 +36,7 @@ export default function ReelCard({
   showCounter = true,
   media,
   actions = null,
+  bottomActions = null,
 }) {
   const num = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
@@ -91,9 +97,15 @@ export default function ReelCard({
 
       {/* Bottom-left meta. */}
       <div className="absolute bottom-0 left-0 max-w-[80%] p-5 md:p-7">
-        {/* The data-* hooks below carry no styling. They let a parent motion
-            layer (see FocusGallery) animate the meta on hover without reaching
-            into this component's class names or structure. */}
+        {/* `bottomActions` — optional slot for an inline control (e.g. the
+            audio button on Cards 2–5) placed above the category eyebrow so
+            it reads as part of the information hierarchy, not a floating
+            overlay. Rendered only when supplied; leaves no gap otherwise. */}
+        {bottomActions && (
+          <div className="mb-3">
+            {bottomActions}
+          </div>
+        )}
         <p
           data-reel-eyebrow
           className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70 md:text-[11px]"
@@ -106,10 +118,6 @@ export default function ReelCard({
         >
           {project.title}
         </h3>
-        {/* Runtime line — accent bullet + duration, as one unit. `showDuration`
-            drops the whole row rather than blanking it, so cards without a
-            runtime (the vertical showcase) end at the title with no orphan
-            bullet and no leftover `mt-1` gutter beneath it. */}
         {!minimal && showDuration && project.duration && (
           <p className="mt-1 flex items-center gap-2 text-xs font-medium text-white/70">
             <span className="inline-block h-1 w-1 rounded-full bg-accent" />

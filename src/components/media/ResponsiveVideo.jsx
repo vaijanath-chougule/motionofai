@@ -22,6 +22,12 @@ export default function ResponsiveVideo({
   poster,
   className = '',
   label = 'Cinematic Video',
+  /** Controllable mute — defaults true (autoplay policy). Pass false to unmute
+   *  after a user gesture (e.g. the audio button in MobileReel for Cards 2–5). */
+  muted = true,
+  /** Solid black loading state instead of the light placeholder gradient.
+   *  Used for Cards 2–5 in the reduced-motion MobileReel path. */
+  darkFallback = false,
 }) {
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const src = isMobile ? mobileSrc ?? desktopSrc : desktopSrc ?? mobileSrc;
@@ -62,6 +68,12 @@ export default function ResponsiveVideo({
     return () => io.disconnect();
   }, [reduce, src]);
 
+  // Apply muted imperatively so toggling audio never restarts playback.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v) v.muted = muted;
+  }, [muted, playing]);
+
   const showVideo = src && mounted && !reduce && !failed;
 
   return (
@@ -76,7 +88,7 @@ export default function ResponsiveVideo({
           poster={poster}
           autoPlay
           loop
-          muted
+          muted={muted}
           playsInline
           preload="metadata"
           onPlaying={() => setPlaying(true)}
@@ -87,7 +99,7 @@ export default function ResponsiveVideo({
       {/* Base layer: poster (if any) or studio placeholder. Sits beneath
           the video and stays visible until real frames fade in — also the
           reduced-motion and no-asset resting state. */}
-      {!playing && <MediaFallback poster={poster} label={label} />}
+      {!playing && <MediaFallback poster={poster} label={label} dark={darkFallback} />}
 
       {/* Inner vignette seats the media into the page. */}
       <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_0_120px_rgba(17,17,17,0.06)]" />
@@ -95,7 +107,7 @@ export default function ResponsiveVideo({
   );
 }
 
-function MediaFallback({ poster, label }) {
+function MediaFallback({ poster, label, dark }) {
   if (poster) {
     return (
       <img
@@ -107,6 +119,9 @@ function MediaFallback({ poster, label }) {
         className="absolute inset-0 h-full w-full object-cover"
       />
     );
+  }
+  if (dark) {
+    return <div className="absolute inset-0 bg-black" />;
   }
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center">

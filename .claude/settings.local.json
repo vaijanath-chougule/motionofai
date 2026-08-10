@@ -45,7 +45,20 @@
       "Bash(node scripts/check-wordmark-gap.mjs)",
       "Bash(node scripts/probe-descent.mjs)",
       "Bash(node scripts/trace-wordmark.mjs)",
-      "Bash(node scripts/verify-wordmark.mjs)"
+      "Bash(node scripts/verify-wordmark.mjs)",
+      "Bash(curl -L --progress-bar -o card2-aurum.mp4 https://assets.wenilo.com/ai-video-production/desktop/product-add-2/hf_20260729_122036_38a26403-3e7c-4d61-8c05-334b215403c7.mp4)",
+      "Bash(echo \"CARD2_EXIT:$?\")",
+      "Bash(curl -L --progress-bar -o card3-origin.mp4 https://assets.wenilo.com/ai-video-production/desktop/product-add-3/hf_20260730_042703_b9cf9e99-aa69-43d1-98b6-783a680f285f.mp4)",
+      "Bash(echo \"CARD3_EXIT:$?\")",
+      "Bash(curl -L --progress-bar -o card4-atelier.mp4 https://assets.wenilo.com/ai-video-production/desktop/product-add-4/hf_20260729_120045_55a10cf8-6358-4899-bf94-a58482a72604.mp4)",
+      "Bash(echo \"CARD4_EXIT:$?\")",
+      "Bash(curl -L --progress-bar -o card5-odyssey.mp4 'https://assets.wenilo.com/ai-video-production/desktop/product%20add/0808%20\\(2\\).mp4')",
+      "Bash(echo \"CARD5_EXIT:$?\")",
+      "Bash(curl -sI \"https://assets.wenilo.com/ai-video-production/desktop/product-add-2/hf_20260729_122036_38a26403-3e7c-4d61-8c05-334b215403c7.mp4\")",
+      "Bash(curl -sI \"https://assets.wenilo.com/ai-video-production/desktop/product-add-3/hf_20260730_042703_b9cf9e99-aa69-43d1-98b6-783a680f285f.mp4\")",
+      "Bash(curl -sI \"https://assets.wenilo.com/ai-video-production/desktop/product-add-4/hf_20260729_120045_55a10cf8-6358-4899-bf94-a58482a72604.mp4\")",
+      "Bash(curl -sI \"https://assets.wenilo.com/ai-video-production/desktop/product%20add/0808%20\\(2\\).mp4\")",
+      "Bash(wait)"
     ]
   }
 }

@@ -43,6 +43,12 @@ export default function ReelVideo({
   allowLoad = true,
   onBufferAhead,
   onUnavailable,
+  /** When true, currentTime is reset to 0 each time the card becomes active.
+   *  Defaults false so Card 1 (ReelShowcase sub-reels) is completely unchanged. */
+  resetOnActivate = false,
+  /** When true, the no-poster loading state is solid black instead of the
+   *  light studio gradient. Defaults false to preserve Card 1 behaviour. */
+  darkFallback = false,
 }) {
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const src = isMobile ? mobileSrc ?? desktopSrc : desktopSrc ?? mobileSrc;
@@ -77,12 +83,18 @@ export default function ReelVideo({
   }, [src]);
 
   // Play only when centred; pause otherwise. Only one video decodes at once.
+  // `resetOnActivate` resets currentTime to 0 on enter so Cards 2–5 always
+  // restart from the beginning — Card 1 leaves this false and is unaffected.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (active) v.play?.().catch(() => {});
-    else v.pause?.();
-  }, [active, mounted]);
+    if (active) {
+      if (resetOnActivate) v.currentTime = 0;
+      v.play?.().catch(() => {});
+    } else {
+      v.pause?.();
+    }
+  }, [active, mounted, resetOnActivate]);
 
   // Audio gate — a live property write on the element itself. No re-mount, no
   // seek, no reload: the frame on screen keeps playing and the sound simply
@@ -124,6 +136,23 @@ export default function ReelVideo({
 
   return (
     <div className="placeholder-surface gpu absolute inset-0 h-full w-full">
+      {/* When a poster exists it crossfades OUT as the video fades IN — both
+          share the same 700ms duration so neither layer ever goes transparent
+          at the same time. Without a poster the original instant-remove path
+          is used unchanged (dark/gradient fallback via MediaFallback). */}
+      {poster && (
+        <img
+          src={poster}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+            playing ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
+      )}
+
       {showVideo && (
         <video
           ref={videoRef}
@@ -146,13 +175,13 @@ export default function ReelVideo({
         />
       )}
 
-      {/* Poster / studio placeholder beneath the video until frames paint. */}
-      {!playing && <MediaFallback poster={poster} label={label} />}
+      {/* Non-poster fallbacks (dark solid / light gradient) — original path. */}
+      {!playing && !poster && <MediaFallback label={label} dark={darkFallback} />}
     </div>
   );
 }
 
-function MediaFallback({ poster, label }) {
+function MediaFallback({ poster, label, dark }) {
   if (poster) {
     return (
       <img
@@ -164,6 +193,11 @@ function MediaFallback({ poster, label }) {
         className="absolute inset-0 h-full w-full object-cover"
       />
     );
+  }
+  // `dark` → solid black loading state for Cards 2–5 (no spinner, no text).
+  // Default light gradient preserved for Card 1 (ReelShowcase sub-reels).
+  if (dark) {
+    return <div className="absolute inset-0 bg-black" />;
   }
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-[radial-gradient(120%_120%_at_50%_30%,#f4f7ff_0%,#eaeef7_55%,#e4e9f4_100%)]">

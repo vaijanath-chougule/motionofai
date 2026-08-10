@@ -10,7 +10,7 @@ import { useCalendly } from '../../contexts/CalendlyContext';
  * same premium easing as the rest of the site so small screens still
  * feel cinematic.
  */
-export default function MobileMenu({ open, onNavigate, onClose }) {
+export default function MobileMenu({ open, onNavigate, onClose, activeSection }) {
   const root = useRef(null);
   const itemsRef = useRef([]);
   const { openCalendly } = useCalendly();
@@ -46,7 +46,9 @@ export default function MobileMenu({ open, onNavigate, onClose }) {
                 onNavigate(e, link);
                 onClose();
               }}
-              className="block py-2 text-4xl font-medium tracking-tight text-ink"
+              className={`block py-2 text-4xl font-medium tracking-tight transition-colors duration-300 ${
+                link.section === activeSection ? 'text-accent' : 'text-ink'
+              }`}
             >
               {link.label}
             </Link>

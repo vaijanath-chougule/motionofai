@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
+import ReelAudioButton from './ReelAudioButton';
 import ReelCard from './ReelCard';
 import ReelProgress from './ReelProgress';
 import ReelShowcase from './ReelShowcase';
@@ -40,10 +41,37 @@ export default function CinematicReel({ projects, mobile = false }) {
   const progressRef = useRef(null);
   const stepRef = useRef(0);
   const activeRef = useRef(0);
+  const prevActiveRef = useRef(0);
 
   const [active, setActive] = useState(0);
   // Which cards are mounted/loaded — everything within one slot of centre.
   const [near, setNear] = useState(() => new Set([0, 1]));
+
+  // Muted state for Cards 2–5 (all non-`reels` entries). Starts fully muted
+  // so every card satisfies browser autoplay policy on first play.
+  // Card 1 (`variant: 'reels'`) manages its own audio inside ReelShowcase.
+  const [mutedCards, setMutedCards] = useState(
+    () => new Set(projects.filter((p) => p.variant !== 'reels').map((p) => p.id)),
+  );
+
+  // When the active card changes, re-mute whichever regular card just left so
+  // returning to it always starts silent (per spec: "reset to muted on return").
+  useEffect(() => {
+    const prev = projects[prevActiveRef.current];
+    if (prev && prev.variant !== 'reels') {
+      setMutedCards((s) => (s.has(prev.id) ? s : new Set([...s, prev.id])));
+    }
+    prevActiveRef.current = active;
+  }, [active, projects]);
+
+  const toggleCardMute = useCallback((id) => {
+    setMutedCards((s) => {
+      const next = new Set(s);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     const section = sectionRef.current;
@@ -189,10 +217,18 @@ export default function CinematicReel({ projects, mobile = false }) {
                   index={i}
                   total={n}
                   isActive={i === active}
-                  // Phones show the film and nothing but its identity:
-                  // category + title. No duration, no NN/TT counter — that
-                  // lives in the progress pill instead.
                   minimal={mobile}
+                  showDuration={false}
+                  // Audio toggle placed above the category label in the bottom
+                  // meta block — not in the top-right corner (that slot stays
+                  // for Card 1's ReelShowcase which manages its own audio).
+                  bottomActions={
+                    <ReelAudioButton
+                      on={!mutedCards.has(project.id)}
+                      onToggle={() => toggleCardMute(project.id)}
+                      label={project.title}
+                    />
+                  }
                   media={
                     <ReelVideo
                       desktopSrc={project.desktopVideo}
@@ -201,6 +237,12 @@ export default function CinematicReel({ projects, mobile = false }) {
                       label={project.category}
                       near={near.has(i)}
                       active={i === active}
+                      // Each card starts muted; user unmutes via the button above.
+                      muted={mutedCards.has(project.id)}
+                      // Restart from the top whenever this card enters centre.
+                      resetOnActivate
+                      // Solid black before the first frame — no white flash.
+                      darkFallback
                     />
                   }
                 />

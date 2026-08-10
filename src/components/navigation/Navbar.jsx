@@ -17,11 +17,21 @@ import { useCalendly } from '../../contexts/CalendlyContext';
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [inPageSection, setInPageSection] = useState(null);
   const { lenis, scrollTo } = useSmoothScroll();
   const { setCursor, resetCursor } = useCursor();
   const { openCalendly } = useCalendly();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Route-based section: dedicated pages are always active regardless of scroll.
+  const routeSection =
+    location.pathname === '/voice-agents' ? 'voice-agents' :
+    location.pathname === '/ai-video-production' ? 'ai-video' :
+    null;
+
+  // The single active section: route wins; otherwise scroll-detected in-page section.
+  const activeSection = routeSection ?? inPageSection;
 
   // Condense-on-scroll — bridged through Lenis, falls back to window.
   useEffect(() => {
@@ -34,6 +44,39 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [lenis]);
+
+  // Scroll-based active section for in-page hash sections (home page only).
+  // Uses getBoundingClientRect so it works correctly with Lenis smooth scroll.
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setInPageSection(null);
+      return undefined;
+    }
+
+    const TRACKED = ['3d-websites', 'contact'];
+    const compute = () => {
+      const mid = window.innerHeight * 0.45;
+      for (const id of TRACKED) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const { top, bottom } = el.getBoundingClientRect();
+        if (top <= mid && bottom > 0) {
+          setInPageSection(id);
+          return;
+        }
+      }
+      setInPageSection(null);
+    };
+
+    if (lenis) {
+      lenis.on('scroll', compute);
+      compute();
+      return () => lenis.off('scroll', compute);
+    }
+    window.addEventListener('scroll', compute, { passive: true });
+    compute();
+    return () => window.removeEventListener('scroll', compute);
+  }, [location.pathname, lenis]);
 
   // Lock body scroll while the mobile menu is open.
   useEffect(() => {
@@ -96,19 +139,26 @@ export default function Navbar() {
           </Link>
 
           <ul className="ml-auto hidden items-center gap-1 lg:flex">
-            {NAV_LINKS.map((link) => (
-              <li key={link.label}>
-                <Link
-                  to={link.to}
-                  onClick={(e) => handleHashNav(e, link)}
-                  onMouseEnter={() => setCursor('hover')}
-                  onMouseLeave={resetCursor}
-                  className="relative rounded-full px-4 py-2 text-sm text-muted transition-colors duration-300 hover:bg-accent-soft hover:text-accent"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = link.section === activeSection;
+              return (
+                <li key={link.label}>
+                  <Link
+                    to={link.to}
+                    onClick={(e) => handleHashNav(e, link)}
+                    onMouseEnter={() => setCursor('hover')}
+                    onMouseLeave={resetCursor}
+                    className={`relative rounded-full px-4 py-2 text-sm transition-colors duration-300 ${
+                      isActive
+                        ? 'bg-accent-soft text-accent'
+                        : 'text-muted hover:bg-accent-soft hover:text-accent'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="ml-auto hidden lg:block">
@@ -144,7 +194,7 @@ export default function Navbar() {
         </nav>
       </header>
 
-      <MobileMenu open={menuOpen} onNavigate={handleHashNav} onClose={() => setMenuOpen(false)} />
+      <MobileMenu open={menuOpen} onNavigate={handleHashNav} onClose={() => setMenuOpen(false)} activeSection={activeSection} />
     </>
   );
 }
