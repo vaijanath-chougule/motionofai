@@ -12,3 +12,6 @@ dist-ssr
 # Local video optimization workspace (multi-hundred-MB media, never committed)
 .video-src/
 optimized-videos/
+
+# Large video assets - hosted on Cloudflare
+work-section/*.mp4

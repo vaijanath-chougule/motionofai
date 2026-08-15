@@ -102,12 +102,14 @@ export const WORK_ITEMS = [
   {
     id: 'w1',
     title: 'AI Video Production',
-    tag: 'Wedding Invitation',
+    tag: 'AI Product Ad',
     span: 'tall',
-    // This card has its own cut under work-section/ rather than a reel from
-    // the showcase collection. Only a desktop source is given because that
-    // tree holds one file per video; ReelVideo serves it to every device.
-    reel: { desktopVideo: workAsset('2k.mp4') },
+    // Product-ad reel from the ai-video-production/desktop tree.
+    // No separate mobile cut exists; both point at the same desktop source.
+    reel: {
+      desktopVideo: reelAsset('desktop', 'product-add-3/hf_20260730_042703_b9cf9e99-aa69-43d1-98b6-783a680f285f.mp4'),
+      mobileVideo:  reelAsset('desktop', 'product-add-3/hf_20260730_042703_b9cf9e99-aa69-43d1-98b6-783a680f285f.mp4'),
+    },
     to: '/ai-video-production',
   },
   { id: 'w2', title: 'Nova Voice', tag: 'AI Voice Agent', span: 'wide' },

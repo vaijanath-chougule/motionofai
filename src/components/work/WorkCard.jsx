@@ -33,9 +33,10 @@ export default function WorkCard({ item }) {
       {...linkProps}
       onMouseEnter={() => setCursor('view', 'View')}
       onMouseLeave={resetCursor}
-      className={`group relative block overflow-hidden rounded-[28px] border border-hairline bg-white ${
+      className={`group relative block overflow-hidden rounded-[28px] border bg-white shadow-sm transition-shadow duration-500 ease-premium hover:shadow-md ${
         item.to ? 'cursor-pointer' : 'cursor-none'
       }`}
+      style={{ borderColor: 'rgba(147,197,253,0.45)' }}
     >
       <div className="overflow-hidden rounded-[28px]" style={{ aspectRatio: RATIO[item.span] || '1 / 1' }}>
         <div className="placeholder-surface card-media h-full w-full transition-transform duration-[900ms] ease-premium group-hover:scale-[1.06]">

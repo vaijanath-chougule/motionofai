@@ -18,6 +18,7 @@ export default function ServiceCard3D() {
     <article
       id="3d-websites"
       className={CARD_SHELL}
+      style={{ borderColor: 'rgba(147,197,253,0.4)' }}
       onMouseEnter={() => setCursor('view', 'Watch')}
       onMouseLeave={resetCursor}
     >
@@ -34,7 +35,17 @@ export default function ServiceCard3D() {
         <div className="px-3 pb-2 pt-6">
           <p className="eyebrow mb-3">01 — 3D Websites</p>
           <h3 className="text-2xl font-semibold leading-tight text-ink md:text-[1.7rem]">
-            Cinematic websites customers <span className="text-accent">never forget</span>.
+            Cinematic websites customers{' '}
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                never forget.
+              </span>
           </h3>
           <p className="mt-3 text-muted">
             Immersive, interactive experiences engineered to turn attention into revenue.

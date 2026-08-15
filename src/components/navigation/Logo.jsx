@@ -9,7 +9,17 @@ export default function Logo() {
         <span className="absolute inset-[6px] rounded-full bg-accent" />
         <span className="absolute inset-0 animate-pulse-ring rounded-full border border-accent/30" />
       </span>
-      <span className="text-[17px] font-semibold tracking-tight text-ink">
+      <span
+        className="font-display font-semibold leading-none"
+        style={{
+          fontSize: '30px',
+          letterSpacing: '-0.045em',
+          backgroundImage: 'linear-gradient(180deg, #7aa2ff 0%, #2563eb 100%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+        }}
+      >
         {BRAND.name}
       </span>
     </span>

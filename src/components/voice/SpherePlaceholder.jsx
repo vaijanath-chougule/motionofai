@@ -77,16 +77,13 @@ function SphereSkin() {
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative flex h-[26%] w-[26%] items-center justify-center rounded-full bg-accent/90 shadow-[0_0_50px_rgba(37,99,235,0.55)]">
           <div className="absolute inset-0 animate-ping rounded-full bg-accent/30" style={{ animationDuration: '3s' }} />
-          {/* Equalizer bars — signals "voice" */}
-          <div className="flex items-end gap-[3px]">
-            {[0.5, 0.9, 0.65, 1, 0.55].map((h, i) => (
-              <span
-                key={i}
-                className="w-[3px] rounded-full bg-white animate-breathe"
-                style={{ height: `${h * 22}px`, animationDelay: `${i * 0.18}s`, animationDuration: '2.4s' }}
-              />
-            ))}
-          </div>
+          {/* "AI" wordmark — centered, clearly visible, ~20% of sphere diameter */}
+          <span
+            className="relative z-10 select-none font-display font-bold leading-none tracking-tight text-white"
+            style={{ fontSize: '240%' }}
+          >
+            AI
+          </span>
         </div>
       </div>
     </>

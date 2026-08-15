@@ -72,6 +72,7 @@ export default function ServiceCardVoice() {
       onMouseEnter={() => setCursor('view', 'Open')}
       onMouseLeave={resetCursor}
       className={`${CARD_SHELL} !p-6 cursor-pointer`}
+      style={{ borderColor: 'rgba(147,197,253,0.4)' }}
     >
       <div className="reveal flex flex-1 flex-col">
         {/* Centered sphere fills the card's vertical space */}
@@ -90,7 +91,17 @@ export default function ServiceCardVoice() {
         <div className="px-2 pb-2 text-center">
           <p className="eyebrow mb-3">02 — AI Voice Agents</p>
           <h3 className="text-2xl font-semibold leading-tight text-ink md:text-[1.7rem]">
-            A voice that answers, qualifies &amp; books — <span className="text-accent">24/7</span>.
+            A voice that answers, qualifies &amp; books —{' '}
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                24/7
+              </span>.
           </h3>
           <p className="mt-3 text-muted">Tap the sphere to step inside.</p>
         </div>

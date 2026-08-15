@@ -29,7 +29,7 @@ import { prefersReducedMotion } from '../utils/device';
 // mover). Two sets: desktop flanks the copy left/right; mobile keeps the
 // sphere centred behind the stacked, glass content so nothing overflows.
 const DESKTOP_POS = [
-  { x: '24vw', y: '0vh', scale: 0.92 }, // 0 hero      — right
+  { x: '24vw', y: '6vh', scale: 0.92 }, // 0 hero      — right
   { x: '-28vw', y: '0vh', scale: 0.64 }, // 1 pricing  — left
   { x: '26vw', y: '0vh', scale: 0.66 }, // 2 live demo — right
   { x: '-28vw', y: '0vh', scale: 0.66 }, // 3 why      — left
@@ -260,7 +260,8 @@ export default function VoiceAgentPage() {
       <section ref={scene} className="relative">
         {/* Persistent stage: phone (behind) + sphere (on top), pinned. */}
         <div className="pointer-events-none sticky top-0 h-[100svh] overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center">
+          {/* Phone — desktop only; mobile gets a static copy inside the finale content */}
+          <div className="absolute inset-0 hidden items-center justify-center md:flex">
             <Phone ref={phone} glowRef={screenGlow} uiRef={screenUI} />
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -278,12 +279,37 @@ export default function VoiceAgentPage() {
         <div className="relative z-10 -mt-[100svh]">
           {/* ===== 1 · HERO — sphere right ===== */}
           <Scene side="left" width="md:max-w-[48%]" vAlign="end">
-            <p data-reveal className="eyebrow mb-2 opacity-0 sm:mb-6">
-              AI Voice Agents
-            </p>
+            {/* AI VOICE AGENTS pill badge — matches AI Video Production badge style */}
+            <div data-reveal className="mb-3 opacity-0 sm:mb-6">
+              <span
+                className="inline-flex items-center rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(239,246,255,1) 0%, rgba(245,243,255,0.9) 100%)',
+                  borderColor: 'rgba(147,197,253,0.7)',
+                  color: '#4f46e5',
+                  boxShadow: '0 2px 12px -4px rgba(79,70,229,0.18)',
+                }}
+              >
+                AI Voice Agents
+              </span>
+            </div>
+
+            {/* Headline — "Customers" gets a premium blue→violet gradient */}
             <h1 data-reveal className="text-display-md font-semibold text-ink opacity-0 md:text-display-lg">
-              Get More <span className="text-accent">Customers</span>
+              Get More{' '}
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 40%, #7c3aed 80%, #22d3ee 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
+                }}
+              >
+                Customers
+              </span>
             </h1>
+
             <p
               data-reveal
               className="mt-2 max-w-xl text-base font-medium leading-snug text-ink opacity-0 sm:mt-5 sm:text-2xl md:text-3xl"
@@ -312,16 +338,25 @@ export default function VoiceAgentPage() {
                 Watch Live Demo
               </MagneticButton>
             </div>
-            <ul data-reveal className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 opacity-0 sm:mt-11 sm:gap-x-8 sm:gap-y-3">
-              {['24/7 Available', 'Human-like Conversations', 'Multilingual', 'CRM Integrated'].map(
-                (t) => (
-                  <li key={t} className="flex items-center gap-2 text-sm text-muted">
-                    <Check className="h-4 w-4 text-accent" />
-                    {t}
-                  </li>
-                ),
-              )}
-            </ul>
+
+            {/* Benefit pills — colourful capsules matching the lower-section badge system */}
+            <div data-reveal className="mt-4 flex flex-wrap gap-2 opacity-0 sm:mt-9 sm:gap-2.5">
+              {[
+                { label: '24/7 Available',           bg: 'rgba(239,246,255,1)',  border: 'rgba(147,197,253,0.8)', color: '#2563eb' },
+                { label: 'Human-like Conversations', bg: 'rgba(245,243,255,1)',  border: 'rgba(196,181,253,0.8)', color: '#7c3aed' },
+                { label: 'Multilingual',              bg: 'rgba(240,249,255,1)',  border: 'rgba(125,211,252,0.8)', color: '#0284c7' },
+                { label: 'CRM Integrated',            bg: 'rgba(243,240,255,1)',  border: 'rgba(167,139,250,0.8)', color: '#6d28d9' },
+              ].map(({ label, bg, border, color }) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold"
+                  style={{ background: bg, borderColor: border, color }}
+                >
+                  <Check className="h-3 w-3 shrink-0" style={{ color }} />
+                  {label}
+                </span>
+              ))}
+            </div>
           </Scene>
 
           {/* ===== 2 · PRICING — sphere left ===== */}
@@ -346,13 +381,24 @@ export default function VoiceAgentPage() {
               <p className="text-sm font-semibold text-ink">
                 What&apos;s Included With Every Premium Plan
               </p>
-              <ul className="mt-5 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-                {INCLUDED.map((feat) => (
-                  <li key={feat} className="flex items-center gap-2.5 text-sm text-muted">
-                    <Check className="h-4 w-4 shrink-0 text-accent" />
-                    {feat}
-                  </li>
-                ))}
+              <ul className="mt-5 grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                {INCLUDED.map((feat, i) => {
+                  // Cycle through 3 color themes: blue, violet, green
+                  const theme = i % 3 === 0
+                    ? { bg: 'bg-blue-50 hover:bg-blue-100/80', border: 'border-blue-100 hover:border-blue-200', icon: 'text-blue-500', text: 'text-blue-700' }
+                    : i % 3 === 1
+                    ? { bg: 'bg-violet-50 hover:bg-violet-100/80', border: 'border-violet-100 hover:border-violet-200', icon: 'text-violet-500', text: 'text-violet-700' }
+                    : { bg: 'bg-emerald-50 hover:bg-emerald-100/80', border: 'border-emerald-100 hover:border-emerald-200', icon: 'text-emerald-500', text: 'text-emerald-700' };
+                  return (
+                    <li
+                      key={feat}
+                      className={`flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-all duration-200 cursor-default select-none hover:-translate-y-0.5 hover:shadow-sm ${theme.bg} ${theme.border} ${theme.text}`}
+                    >
+                      <Check className={`h-4 w-4 shrink-0 ${theme.icon}`} />
+                      {feat}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </Scene>
@@ -362,12 +408,23 @@ export default function VoiceAgentPage() {
             <p data-reveal className="eyebrow mb-3 opacity-0">
               Hear It In Action
             </p>
-            <h2 data-reveal className="text-display-sm font-semibold text-ink opacity-0">
-              Real AI Conversations.
+            <h2 data-reveal className="text-display-sm font-semibold opacity-0">
+              Real AI{' '}
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 55%, #22d3ee 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
+                }}
+              >
+                Conversations.
+              </span>
             </h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
-              {CONVERSATIONS.map((c) => (
-                <ConversationCard key={c.name} item={c} />
+              {CONVERSATIONS.map((c, i) => (
+                <ConversationCard key={c.name} item={c} colorIndex={i} />
               ))}
             </div>
           </Scene>
@@ -375,57 +432,285 @@ export default function VoiceAgentPage() {
           {/* ===== 4 · WHY CHOOSE — sphere left ===== */}
           <Scene side="right" width="md:max-w-[48%]">
             <h2 data-reveal className="text-display-sm font-semibold text-ink opacity-0">
-              Why Choose wenilo Voice Agent
+              Why Choose{' '}
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 60%, #22d3ee 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
+                }}
+              >
+                wenilo Voice Agent
+              </span>
             </h2>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
-              {BENEFITS.map((b) => (
-                <div
-                  key={b.title}
-                  data-reveal
-                  className="group rounded-[24px] glass p-6 opacity-0 transition-transform duration-300 hover:-translate-y-1.5 hover:scale-[1.02]"
-                >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent-soft text-accent transition-transform duration-300 group-hover:scale-110">
-                    <b.icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-5 text-lg font-medium text-ink">{b.title}</h3>
-                  <p className="mt-2 leading-relaxed text-muted">{b.copy}</p>
-                </div>
-              ))}
+              {BENEFITS.map((b, i) => {
+                const themes = [
+                  { bg: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', border: 'rgba(147,197,253,0.6)', iconBg: 'rgba(219,234,254,1)', iconColor: '#2563eb' },
+                  { bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', border: 'rgba(196,181,253,0.6)', iconBg: 'rgba(237,233,254,1)', iconColor: '#7c3aed' },
+                  { bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', border: 'rgba(125,211,252,0.6)', iconBg: 'rgba(224,242,254,1)', iconColor: '#0284c7' },
+                  { bg: 'linear-gradient(135deg, #f3f0ff 0%, #e8e3ff 100%)', border: 'rgba(167,139,250,0.6)', iconBg: 'rgba(232,227,255,1)', iconColor: '#6d28d9' },
+                ];
+                const t = themes[i % 4];
+                return (
+                  <div
+                    key={b.title}
+                    data-reveal
+                    className="group rounded-[24px] p-6 opacity-0 transition-all duration-300 hover:-translate-y-1.5 hover:scale-[1.02]"
+                    style={{
+                      background: t.bg,
+                      border: `1px solid ${t.border}`,
+                      boxShadow: '0 4px 24px -8px rgba(37,99,235,0.10)',
+                    }}
+                  >
+                    <span
+                      className="flex h-11 w-11 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: t.iconBg, color: t.iconColor }}
+                    >
+                      <b.icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-5 text-lg font-medium text-ink">{b.title}</h3>
+                    <p className="mt-2 leading-relaxed text-muted">{b.copy}</p>
+                  </div>
+                );
+              })}
             </div>
           </Scene>
 
           {/* ===== 5 · BOOK A DISCOVERY CALL — sphere into phone ===== */}
           <section id="book" ref={finale} data-va-panel className="relative min-h-[100svh]">
-            <div className="flex h-[100svh] items-center">
+            {/* Mobile: natural scroll height; desktop: fixed viewport */}
+            <div className="flex items-center md:h-[100svh]">
               <div className="shell w-full">
-                <div className="flex h-full min-h-[62svh] flex-col items-center justify-between pt-[18svh] pb-8 text-center sm:min-h-0 sm:pt-[2svh] sm:py-16 md:flex-row md:justify-between md:py-0 md:text-left">
-                  {/* Phone-first: the copy sits above the rising phone on
-                      mobile. The heading is small and sits just above the
-                      sphere; the button drops beneath the phone (below the
-                      "wenilo" label). Full size + layout return at sm/md. */}
-                  <div data-reveal className="max-w-[15rem] opacity-0 sm:max-w-xs">
-                    <h2 className="text-base font-semibold text-ink sm:text-2xl md:text-display-sm">
-                      Grow While You Sleep
+                {/*
+                  LAYOUT STRATEGY
+                  ─ Mobile  (<md): stacked column — left copy → USP cards → static phone
+                  ─ Desktop (≥md): three-column row — left | phone (centre, GSAP) | right
+                */}
+                <div className="flex flex-col gap-8 py-20 text-center sm:gap-10 sm:py-24 md:min-h-0 md:flex-row md:items-center md:justify-between md:gap-0 md:py-0 md:text-left">
+
+                  {/* ── LEFT COLUMN ── */}
+                  <div data-reveal className="relative flex flex-col items-center gap-5 opacity-0 md:max-w-[290px] md:items-start lg:max-w-sm">
+
+                    {/* ambient glow */}
+                    <div
+                      className="pointer-events-none absolute -left-8 -top-8 h-56 w-56 rounded-full blur-3xl"
+                      style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.13) 0%, transparent 70%)' }}
+                    />
+
+                    {/* eyebrow chip — larger */}
+                    <span className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-500">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
+                      </span>
+                      Always On
+                    </span>
+
+                    {/* heading — bigger at every breakpoint */}
+                    <h2
+                      className="relative font-semibold text-ink"
+                      style={{
+                        fontSize: 'clamp(2.35rem, 5.8vw, 3.85rem)',
+                        lineHeight: 1.05,
+                        letterSpacing: '-0.03em',
+                      }}
+                    >
+                      Grow While{' '}
+                      <span
+                        style={{
+                          backgroundImage: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #7c3aed 100%)',
+                          WebkitBackgroundClip: 'text',
+                          backgroundClip: 'text',
+                          color: 'transparent',
+                        }}
+                      >
+                        You Sleep
+                      </span>
                     </h2>
-                  </div>
 
-                  {/* centre gap reserved for the phone/sphere finale */}
-                  <div className="hidden shrink-0 md:block md:w-[34%]" />
+                    {/* description — bigger text, same accent bar */}
+                    <div className="relative pl-4">
+                      <span
+                        className="absolute left-0 top-0 h-full w-[3px] rounded-full"
+                        style={{ background: 'linear-gradient(180deg, #3b82f6 0%, #7c3aed 100%)' }}
+                      />
+                      <p className="text-lg leading-relaxed text-muted sm:text-xl">
+                        An AI that answers calls, books appointments and follows up — automatically. 24/7.
+                      </p>
+                    </div>
 
-                  <div
-                    data-reveal
-                    className="flex w-full justify-center opacity-0 sm:w-auto md:w-[33%]"
-                  >
+                    {/* feature pills — bigger padding + text */}
+                    <div className="flex flex-wrap justify-center gap-2.5 md:justify-start">
+                      {[
+                        { label: '24/7 Active', color: 'blue' },
+                        { label: 'Auto Follow-up', color: 'violet' },
+                        { label: 'Books Appointments', color: 'blue' },
+                      ].map(({ label, color }) => (
+                        <span
+                          key={label}
+                          className={`rounded-full px-4 py-1.5 text-sm font-medium ${
+                            color === 'blue'
+                              ? 'bg-blue-50 text-blue-600 border border-blue-100'
+                              : 'bg-violet-50 text-violet-600 border border-violet-100'
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      ))}
+                    </div>
+
                     <MagneticButton
                       onClick={openCalendly}
                       variant="primary"
                       size="compact"
                       strength={0.5}
-                      className="w-auto scale-90 sm:scale-100"
+                      className="mt-1 w-auto"
                     >
                       Schedule a Call
                     </MagneticButton>
                   </div>
+
+                  {/* ── CENTRE GAP — phone/sphere finale rises here (desktop only) ── */}
+                  <div className="hidden shrink-0 md:block md:w-[34%]" />
+
+                  {/* ── RIGHT COLUMN — two USP stat cards ── */}
+                  <div
+                    data-reveal
+                    className="flex w-full flex-col gap-3 opacity-0 sm:flex-row sm:gap-4 md:w-[30%] md:flex-col md:gap-4"
+                  >
+                    {/* USP 1 — price, wenilo blue */}
+                    <div className="group relative flex-1 overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_20px_60px_-20px_rgba(37,99,235,0.25)] sm:p-6 md:flex-none">
+                      {/* subtle animated glow blob */}
+                      <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-blue-200/40 blur-2xl transition-all duration-700 group-hover:scale-150 group-hover:bg-blue-300/50" />
+                      <div className="relative">
+                        <div className="flex items-baseline gap-1">
+                          <span
+                            className="font-display font-semibold leading-none"
+                            style={{
+                              fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+                              letterSpacing: '-0.04em',
+                              backgroundImage: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 60%, #1d4ed8 100%)',
+                              WebkitBackgroundClip: 'text',
+                              backgroundClip: 'text',
+                              color: 'transparent',
+                            }}
+                          >
+                            $0.06
+                          </span>
+                          <span className="text-sm font-medium text-blue-400">/min</span>
+                        </div>
+                        <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-widest text-blue-400">
+                          India pricing ≈ ₹5/min
+                        </p>
+                        <p className="mt-2 text-sm leading-snug text-muted">
+                          Fraction of a human response
+                        </p>
+                        <div className="mt-3 flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                          <span className="text-xs text-blue-500">No salary. No sick days.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* USP 2 — human voice, violet */}
+                    <div className="group relative flex-1 overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-violet-200 hover:shadow-[0_20px_60px_-20px_rgba(139,92,246,0.25)] sm:p-6 md:flex-none">
+                      {/* subtle animated glow blob */}
+                      <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-violet-200/40 blur-2xl transition-all duration-700 group-hover:scale-150 group-hover:bg-violet-300/50" />
+                      <div className="relative">
+                        {/* animated waveform icon */}
+                        <div className="mb-3 flex items-end gap-[3px]">
+                          {[14, 22, 18, 28, 20, 16, 24, 12].map((h, i) => (
+                            <span
+                              key={i}
+                              className="w-[3px] animate-breathe rounded-full bg-violet-400"
+                              style={{
+                                height: `${h}px`,
+                                animationDelay: `${i * 0.15}s`,
+                                animationDuration: '2.4s',
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <p
+                          className="font-display font-semibold leading-tight"
+                          style={{
+                            fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)',
+                            letterSpacing: '-0.025em',
+                            backgroundImage: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                            WebkitBackgroundClip: 'text',
+                            backgroundClip: 'text',
+                            color: 'transparent',
+                          }}
+                        >
+                          Human-like voice
+                        </p>
+                        <p className="mt-2 text-sm leading-snug text-muted">
+                          Sounds just like your team
+                        </p>
+                        <div className="mt-3 flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+                          <span className="text-xs text-violet-500">Multilingual. Calm. Confident.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── MOBILE ONLY: static phone at bottom ── */}
+                  <div data-reveal className="flex justify-center opacity-0 md:hidden">
+                    <div
+                      className="relative overflow-hidden rounded-[2.2rem] bg-ink p-[8px] shadow-[0_30px_80px_-30px_rgba(17,17,17,0.45)]"
+                      style={{ width: 'min(54vw, 200px)', aspectRatio: '9/19' }}
+                    >
+                      <div className="relative h-full w-full overflow-hidden rounded-[1.75rem] bg-canvas">
+                        {/* screen glow */}
+                        <div
+                          className="pointer-events-none absolute inset-0"
+                          style={{
+                            background:
+                              'radial-gradient(120% 90% at 50% 42%, rgba(37,99,235,0.18), rgba(255,255,255,0) 62%)',
+                          }}
+                        />
+                        {/* notch */}
+                        <div className="absolute left-1/2 top-2.5 h-1 w-12 -translate-x-1/2 rounded-full bg-ink/70" />
+                        {/* screen content */}
+                        <div className="absolute inset-0">
+                          {/* top: live dot + label */}
+                          <div className="absolute left-1/2 top-7 flex -translate-x-1/2 flex-col items-center gap-1.5">
+                            <span className="relative flex h-1.5 w-1.5">
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/60" />
+                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                            </span>
+                            <span className="flex flex-col items-center text-[8px] font-semibold uppercase leading-tight tracking-eyebrow text-ink">
+                              <span>Get</span>
+                              <span>More</span>
+                              <span>Customers</span>
+                            </span>
+                          </div>
+                          {/* bottom: waveform + brand */}
+                          <div className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-3">
+                            <div className="flex h-5 items-center gap-[2px]">
+                              {WAVE.map((h, i) => (
+                                <span
+                                  key={i}
+                                  className="w-[2px] animate-breathe rounded-full bg-accent/80"
+                                  style={{
+                                    height: `${Math.round(h * 0.62)}px`,
+                                    animationDelay: `${i * 0.12}s`,
+                                    animationDuration: '2.2s',
+                                  }}
+                                />
+                              ))}
+                            </div>
+                            <p className="text-[9px] font-medium text-muted">wenilo</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -449,7 +734,7 @@ function Scene({ id, side = 'left', width = 'md:max-w-[48%]', vAlign = 'center',
   const valign = vAlign === 'end' ? 'items-end md:items-center' : 'items-center';
   // End-aligned (hero) sits lower on mobile: trim the bottom padding so the
   // stacked copy drops beneath the sphere instead of riding into it.
-  const pad = vAlign === 'end' ? 'pt-20 pb-0 md:py-24' : 'py-20 md:py-24';
+  const pad = vAlign === 'end' ? 'pt-32 pb-0 md:pt-36 md:pb-20' : 'py-20 md:py-24';
   return (
     <section
       id={id}
@@ -472,6 +757,7 @@ function Scene({ id, side = 'left', width = 'md:max-w-[48%]', vAlign = 'center',
 /* ------------------------------------------------------------------ */
 function PlanRow({ plan, first }) {
   const amber = plan.highlight === 'amber';
+  const { openCalendly } = useCalendly();
   return (
     <div
       className={`group relative flex flex-col gap-3 px-5 py-4 transition-colors duration-300 sm:flex-row sm:items-center sm:gap-4 ${
@@ -509,9 +795,10 @@ function PlanRow({ plan, first }) {
         {plan.total && <p className="text-[11px] text-muted">{plan.total}</p>}
       </div>
 
-      {/* Compact inline CTA — same height as the row, never heavy */}
+      {/* Compact inline CTA — opens Calendly */}
       <button
         type="button"
+        onClick={openCalendly}
         className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-all duration-300 ${
           amber
             ? 'border-amber-400/60 text-amber-700 hover:border-transparent hover:bg-gradient-to-r hover:from-amber-400 hover:to-orange-500 hover:text-white'
@@ -527,10 +814,19 @@ function PlanRow({ plan, first }) {
 /* ------------------------------------------------------------------ */
 /* Conversation card — real audio playback + reveal-on-click transcript */
 /* ------------------------------------------------------------------ */
-function ConversationCard({ item }) {
+// Colour themes per card index — blue, violet, sky, indigo
+const CARD_THEMES = [
+  { bg: 'linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%)', border: 'rgba(147,197,253,0.65)', tagBg: 'rgba(219,234,254,1)', tagColor: '#1d4ed8', scoreDot: '#3b82f6' },
+  { bg: 'linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%)', border: 'rgba(196,181,253,0.65)', tagBg: 'rgba(237,233,254,1)', tagColor: '#6d28d9', scoreDot: '#7c3aed' },
+  { bg: 'linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%)', border: 'rgba(125,211,252,0.65)', tagBg: 'rgba(224,242,254,1)', tagColor: '#0369a1', scoreDot: '#0284c7' },
+  { bg: 'linear-gradient(135deg,#f3f0ff 0%,#e8e3ff 100%)', border: 'rgba(167,139,250,0.65)', tagBg: 'rgba(232,227,255,1)', tagColor: '#5b21b6', scoreDot: '#6d28d9' },
+];
+
+function ConversationCard({ item, colorIndex = 0 }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [openT, setOpenT] = useState(false);
+  const t = CARD_THEMES[colorIndex % CARD_THEMES.length];
 
   const toggle = () => {
     const a = audioRef.current;
@@ -542,10 +838,18 @@ function ConversationCard({ item }) {
   return (
     <div
       data-reveal
-      className="flex flex-col rounded-[24px] glass p-6 opacity-0 transition-all duration-300 hover:-translate-y-1.5 hover:border-accent/50 hover:bg-accent/[0.06]"
+      className="flex flex-col rounded-[24px] p-6 opacity-0 transition-all duration-300 hover:-translate-y-1.5"
+      style={{
+        background: t.bg,
+        border: `1px solid ${t.border}`,
+        boxShadow: '0 4px 24px -8px rgba(37,99,235,0.10)',
+      }}
     >
       <div className="flex items-center justify-between">
-        <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-accent">
+        <span
+          className="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide"
+          style={{ background: t.tagBg, color: t.tagColor }}
+        >
           {item.tag}
         </span>
         <span className="text-[11px] font-medium uppercase tracking-wide text-muted">
@@ -561,14 +865,15 @@ function ConversationCard({ item }) {
           type="button"
           onClick={toggle}
           aria-label={playing ? 'Pause recording' : 'Play recording'}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-all duration-300 hover:bg-accent hover:scale-105"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-all duration-300 hover:scale-105"
+          style={{ background: t.tagColor }}
         >
           {playing ? <IconPause className="h-4 w-4" /> : <IconPlay className="h-4 w-4" />}
         </button>
         <div className="flex flex-1 items-center justify-between text-xs text-muted">
           <span>{item.duration}</span>
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: t.scoreDot }} />
             Lead Score {item.score}
           </span>
         </div>
@@ -586,13 +891,14 @@ function ConversationCard({ item }) {
       <button
         type="button"
         onClick={() => setOpenT((v) => !v)}
-        className="mt-5 flex items-center gap-1.5 text-sm font-medium text-accent"
+        className="mt-5 flex items-center gap-1.5 text-sm font-medium"
+        style={{ color: t.tagColor }}
       >
         View Transcript
         <IconChevron className={`h-4 w-4 transition-transform ${openT ? 'rotate-180' : ''}`} />
       </button>
       {openT && (
-        <p className="mt-3 border-t border-hairline pt-3 text-sm leading-relaxed text-muted">
+        <p className="mt-3 border-t pt-3 text-sm leading-relaxed text-muted" style={{ borderColor: t.border }}>
           {item.transcript}
         </p>
       )}
@@ -660,7 +966,7 @@ const PLANS = [
     name: 'Quick-Start',
     highlight: 'amber',
     badge: 'Try it out',
-    price: '₹5,000',
+    price: '$52',
     unit: '+ taxes',
     detail: '500 Minutes · All Features Unlocked',
     tagline: 'Get started immediately',
@@ -668,27 +974,27 @@ const PLANS = [
   },
   {
     name: 'Starter',
-    price: '₹4.00',
+    price: '$0.0520',
     unit: '/min',
     detail: '10,000 Minutes',
-    total: '₹40,000 + taxes',
+    total: '$520 + taxes',
     cta: 'Get Started',
   },
   {
     name: 'Growth',
     badge: 'Most Popular',
-    price: '₹3.50',
+    price: '$0.0468',
     unit: '/min',
     detail: '25,000 Minutes',
-    total: '₹87,500 + taxes',
+    total: '$1,170 + taxes',
     cta: 'Get Started',
   },
   {
     name: 'Scale',
-    price: '₹3.25',
+    price: '$0.0442',
     unit: '/min',
     detail: '1 Lakh Minutes',
-    total: '₹3.25 Lakh + taxes',
+    total: '$4,420 + taxes',
     cta: 'Get Started',
   },
   {

@@ -141,18 +141,52 @@ export default function FinalCTA() {
       ref={scope}
       className="relative flex flex-col overflow-hidden bg-canvas pt-28 md:pt-40"
     >
-      {/* Faint accent aura behind the type */}
+      {/* Atmospheric colour pools — blue centre + violet right + cyan left */}
       <div
         className="pointer-events-none absolute left-1/2 top-[42%] h-[60vw] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl"
         style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12), rgba(37,99,235,0) 68%)' }}
       />
+      <div
+        className="pointer-events-none absolute -right-20 top-[20%] h-[45vw] w-[45vw] rounded-full opacity-50 blur-3xl"
+        style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.09), rgba(124,58,237,0) 70%)' }}
+      />
+      <div
+        className="pointer-events-none absolute -left-16 top-[55%] h-[40vw] w-[40vw] rounded-full opacity-40 blur-3xl"
+        style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.07), rgba(6,182,212,0) 70%)' }}
+      />
 
       <div className="shell relative flex flex-col items-center text-center">
-        <p className="reveal eyebrow mb-8">Let's Talk</p>
-        <h2 className="reveal max-w-5xl text-display-lg font-semibold text-ink">
-          Ready to get <span className="text-accent">more customers?</span>
+        {/* LET'S TALK — premium pill badge matching the site-wide label system */}
+        <div className="reveal mb-8 flex justify-center">
+          <span
+            className="inline-flex items-center rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
+            style={{
+              background: 'linear-gradient(135deg, rgba(239,246,255,1) 0%, rgba(245,243,255,0.9) 100%)',
+              borderColor: 'rgba(147,197,253,0.7)',
+              color: '#4f46e5',
+              boxShadow: '0 2px 12px -4px rgba(79,70,229,0.18)',
+            }}
+          >
+            Let's Talk
+          </span>
+        </div>
+        <h2 className="reveal max-w-5xl text-display-lg font-bold leading-[1.05] text-ink">
+          Ready to get{' '}
+          <span
+            style={{
+              background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 48%, #22d3ee 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            more customers?
+          </span>
         </h2>
-        <p className="reveal mx-auto mt-8 max-w-[650px] text-lg leading-relaxed text-muted">
+        <p
+          className="reveal mx-auto mt-8 max-w-[650px] text-lg leading-relaxed"
+          style={{ color: '#475569', lineHeight: '1.75' }}
+        >
           Whether you need an immersive 3D website, an AI voice agent that works 24/7, or a
           cinematic AI commercial — we'd love to hear your vision.
         </p>
@@ -182,9 +216,15 @@ export default function FinalCTA() {
                   aria-label={label}
                   className="flex min-w-0 flex-col items-center justify-center gap-2.5"
                 >
-                  <span className="flex h-6 items-center justify-center">
+                  <span
+                    className="flex h-11 w-11 items-center justify-center rounded-2xl border transition-all duration-[350ms] ease-out group-hover:shadow-[0_4px_16px_-4px_rgba(79,70,229,0.22)]"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(239,246,255,0.9) 0%, rgba(245,243,255,0.8) 100%)',
+                      borderColor: 'rgba(147,197,253,0.45)',
+                    }}
+                  >
                     <Icon
-                      className="h-6 w-6 text-ink/80 transition-colors duration-[350ms] ease-out group-hover:text-accent"
+                      className="h-5 w-5 text-indigo-500 transition-colors duration-[350ms] ease-out group-hover:text-accent"
                       strokeWidth={brand ? undefined : 1.5}
                       aria-hidden="true"
                     />
@@ -199,9 +239,19 @@ export default function FinalCTA() {
         </ul>
 
         <div className="reveal mt-16">
-          <MagneticButton onClick={openCalendly} variant="primary" strength={0.55} className="px-10 py-5 text-base">
-            {CTA.primary}
-          </MagneticButton>
+          <div className="relative inline-block">
+            {/* Subtle blue → violet glow beneath the button */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 -bottom-2 mx-auto h-6 w-3/4 blur-[16px]"
+              style={{ background: 'linear-gradient(135deg, rgba(37,99,235,0.40) 0%, rgba(139,92,246,0.28) 100%)' }}
+            />
+            <div className="relative" style={{ zIndex: 1 }}>
+              <MagneticButton onClick={openCalendly} variant="primary" strength={0.55} className="px-10 py-5 text-base">
+                {CTA.primary}
+              </MagneticButton>
+            </div>
+          </div>
         </div>
       </div>
 

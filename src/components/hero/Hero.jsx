@@ -92,25 +92,67 @@ export default function Hero() {
 
         <div ref={parallaxRef} className="relative z-10 flex w-full justify-center">
           <div data-hero-content className="shell flex flex-col items-center text-center">
-            <span data-hero-eyebrow data-parallax="0.25" className="eyebrow mb-6 inline-flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              The Growth Studio
-            </span>
 
-            <h1 data-parallax="0.4" className="text-display-xl font-semibold text-ink" aria-label="Get More Customers">
+            {/* Hero eyebrow — transparent glass pill for longer tagline, no dot */}
+            <div data-hero-eyebrow data-parallax="0.25" className="mb-7">
+              <span
+                className="inline-flex items-center whitespace-nowrap rounded-full border px-5 py-2"
+                style={{
+                  background: 'rgba(255,255,255,0.12)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  borderColor: 'rgba(147,197,253,0.50)',
+                  boxShadow: '0 2px 20px -4px rgba(79,70,229,0.22), 0 1px 0 rgba(255,255,255,0.3) inset',
+                }}
+              >
+                <span
+                  className="text-xs font-semibold uppercase tracking-widest"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  We Will Help You To Integrate AI In Your Business
+                </span>
+              </span>
+            </div>
+
+            {/* Headline — 90% of original display-xl; "Customers" in Playfair italic */}
+            <h1
+              data-parallax="0.4"
+              className="font-semibold text-ink"
+              style={{ fontSize: 'clamp(3.15rem, 10.8vw, 10.8rem)', lineHeight: '0.92', letterSpacing: '-0.04em' }}
+              aria-label="Get More Customers"
+            >
               <span className="block overflow-hidden">
                 <span data-hero-word className="inline-block">Get</span>{' '}
                 <span data-hero-word className="inline-block">More</span>
               </span>
-              <span className="block overflow-hidden">
-                <span data-hero-word className="inline-block text-accent">Customers</span>
+              <span className="block overflow-hidden" style={{ lineHeight: '1.0' }}>
+                <span
+                  data-hero-word
+                  className="inline-block"
+                  style={{
+                    fontWeight: 600,
+                    backgroundImage: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 30%, #7c3aed 70%, #22d3ee 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    color: 'transparent',
+                  }}
+                >
+                  Customers
+                </span>
               </span>
             </h1>
 
+            {/* Service statement — cohesive dark charcoal, accent-tinted separators only */}
             <div
               data-parallax="0.3"
               className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-3 text-display-sm font-semibold leading-[1.2] text-[#1E293B]"
-              style={{ textShadow: '0 1px 2px rgba(255, 255, 255, 0.6)' }}
+              style={{ textShadow: '0 1px 2px rgba(255,255,255,0.6)' }}
             >
               {OFFERINGS.map((o, i) => (
                 <span key={o} data-hero-sub className="inline-flex items-center gap-3">
@@ -120,15 +162,14 @@ export default function Hero() {
               ))}
             </div>
 
+            {/* CTAs — Schedule a Call gets a lavender glow wrap */}
             <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row" data-parallax="0.2">
-              <span data-hero-cta>
+              <span data-hero-cta style={{ filter: 'drop-shadow(0 8px 20px rgba(124,58,237,0.28))' }}>
                 <MagneticButton onClick={openCalendly} variant="primary" strength={0.5}>
                   {CTA.primary}
                 </MagneticButton>
               </span>
               <span data-hero-cta>
-                {/* Button stays fixed on hover — only paint feedback
-                    (colour/border/blur) via the .cta-glass variant. */}
                 <MagneticButton to="/#work" variant="secondary" strength={0.5}>
                   {CTA.secondary}
                   <Arrow />

@@ -51,6 +51,7 @@ export default function ServiceCardVideo() {
       onMouseEnter={() => setCursor('view', 'Open')}
       onMouseLeave={resetCursor}
       className={`${CARD_SHELL} !p-0 cursor-pointer`}
+      style={{ borderColor: 'rgba(147,197,253,0.4)' }}
     >
       <div className="reveal flex flex-1 flex-col">
         <div className={`relative overflow-hidden rounded-[inherit] ${CARD_MEDIA_ASPECT} grow`}>
@@ -75,7 +76,17 @@ export default function ServiceCardVideo() {
           <div className="absolute inset-x-0 bottom-0 px-6 pb-5 md:px-7 md:pb-6">
             <p className="eyebrow mb-3 text-white/80">03 — AI Video Production</p>
             <h3 className="text-2xl font-semibold leading-tight text-white md:text-[1.7rem]">
-              AI commercials that <span className="text-accent">increase conversions</span>.
+              AI commercials that{' '}
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                increase conversions
+              </span>.
             </h3>
             <p className="mt-3 text-white/75">
               Cinema-grade video at the speed of AI — crafted to move audiences and move metrics.

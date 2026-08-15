@@ -3,6 +3,7 @@ import { gsap, EASE } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import { prefersReducedMotion } from '../../utils/device';
 import { CALENDLY_URL } from '../../utils/constants';
+import { useCalendly } from '../../contexts/CalendlyContext';
 import BrandWordmark from '../brand/BrandWordmark';
 
 /**
@@ -38,6 +39,7 @@ export default function AIVideoCTA() {
   const calendlyMount = useRef(null);
   const widgetRef = useRef(null);
   const [showCalendly, setShowCalendly] = useState(false);
+  const { openCalendly } = useCalendly();
 
   // Calendly needs an explicit pixel height (its iframe can't auto-size).
   // Mobile is taller (720px) so the booking form's header + calendar fit
@@ -214,6 +216,18 @@ export default function AIVideoCTA() {
         className="pointer-events-none absolute -bottom-24 right-[8%] h-[40vh] w-[40vh] rounded-full blur-[110px]"
         style={{ background: 'radial-gradient(circle, rgba(37,99,235,0.12), rgba(37,99,235,0) 70%)' }}
       />
+      {/* Lavender pool — upper-left, behind the headline */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-24 top-1/4 h-[45vh] w-[45vh] rounded-full blur-[120px]"
+        style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.09), rgba(124,58,237,0) 68%)' }}
+      />
+      {/* Cyan whisper — far right, mid-height */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[12%] top-[30%] h-[30vh] w-[30vh] rounded-full blur-[100px]"
+        style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.07), rgba(6,182,212,0) 65%)' }}
+      />
 
       {/* ── Split layout: 55% / 45% on desktop, stacked on mobile ─────── */}
       <div className="relative flex flex-1 items-center py-16 md:py-20">
@@ -221,45 +235,76 @@ export default function AIVideoCTA() {
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[55fr_45fr] lg:gap-16 xl:gap-24">
           {/* ── LEFT — editorial content ─────────────────────────────── */}
           <div className="max-w-2xl">
-            <p data-reveal className="eyebrow mb-6">
-              The Next Scene Is Yours
-            </p>
+            {/* "THE NEXT SCENE IS YOURS" — premium pill badge */}
+            <div data-reveal className="mb-7">
+              <span
+                className="inline-flex items-center rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-widest"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(239,246,255,1) 0%, rgba(245,243,255,0.9) 100%)',
+                  borderColor: 'rgba(147,197,253,0.7)',
+                  color: '#4f46e5',
+                  boxShadow: '0 2px 12px -4px rgba(79,70,229,0.18)',
+                }}
+              >
+                The Next Scene Is Yours
+              </span>
+            </div>
 
+            {/* Headline — "Worth Watching?" gets blue→violet→cyan gradient */}
             <h2
               data-reveal
               className="text-display-md font-semibold leading-[1.02] text-ink"
             >
               Have a Story
               <br />
-              Worth Watching?
+              <span
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 50%, #22d3ee 100%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  color: 'transparent',
+                }}
+              >
+                Worth Watching?
+              </span>
             </h2>
 
-            {/* Luxury italic serif accent — wenilo blue, soft glow. */}
+            {/* Tagline — blue→violet gradient, keeps italic serif feel */}
             <p
               data-reveal
-              className="mt-5 italic text-accent"
+              className="relative mt-6 italic"
               style={{
                 fontFamily: SERIF,
                 fontWeight: 500,
                 fontSize: 'clamp(1.75rem, 3.4vw, 3rem)',
                 lineHeight: 1.1,
                 letterSpacing: '-0.01em',
-                textShadow: '0 0 30px rgba(37,99,235,0.22)',
+                backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 60%, #22d3ee 100%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                color: 'transparent',
+                filter: 'drop-shadow(0 0 18px rgba(124,58,237,0.18))',
               }}
             >
               Let&apos;s Bring It To Life.
             </p>
 
-            {/* Premium CTA button — scrolls to the live Calendly widget so
-                the visitor books without ever leaving the page. */}
+            {/* CTA button — same functionality, subtle lavender glow added */}
             <div data-reveal className="mt-10">
-              <button
-                type="button"
-                onClick={scrollToCalendly}
-                className="cta-light-primary group relative inline-flex items-center justify-center gap-2 rounded-full px-9 py-4 text-[15px] font-semibold tracking-tight gpu"
+              <div
+                className="inline-block rounded-full"
+                style={{ boxShadow: '0 8px 32px -10px rgba(124,58,237,0.30)' }}
               >
-                <span className="relative z-10">Schedule a Call</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={openCalendly}
+                  className="cta-light-primary group relative inline-flex items-center justify-center gap-2 rounded-full px-9 py-4 text-[15px] font-semibold tracking-tight gpu"
+                >
+                  <span className="relative z-10">Schedule a Call</span>
+                </button>
+              </div>
             </div>
           </div>
 
