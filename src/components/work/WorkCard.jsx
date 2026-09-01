@@ -8,6 +8,7 @@ const RATIO = {
   tall: '3 / 4',
   wide: '4 / 3',
   normal: '1 / 1',
+  video: '16 / 9',
 };
 
 /**
@@ -16,15 +17,19 @@ const RATIO = {
  * poster image / video into `.card-media` later — the frame is fixed.
  *
  * An item carrying `reel` fills that same frame with a real film instead of
- * the placeholder (see WorkCardReel), and one carrying `to` renders as a
- * router Link so the WHOLE card navigates — not just the corner arrow. The
- * frame, ratios, hover zoom and meta row are identical either way.
+ * the placeholder (see WorkCardReel). Every item carries `to`, so the card
+ * renders as a router Link and the WHOLE card navigates — not just the corner
+ * arrow. The frame, ratios, hover zoom and meta row are identical either way.
  */
 export default function WorkCard({ item }) {
   const { setCursor, resetCursor } = useCursor();
 
-  // A linked card must show the native pointer; the placeholder cards keep
-  // hiding it for the custom cursor, exactly as before.
+  // Every WORK_ITEMS entry now carries `to`, so every card is a real router
+  // Link and the WHOLE card surface is clickable. The `article` branch stays as
+  // a guard for a future entry without a destination — it must not advertise a
+  // pointer it cannot honour, so only the Link branch gets `cursor-pointer`.
+  // Nothing inside the card overrides the cursor: the media well, the reel and
+  // the meta row all inherit it, and the arrow is a <span>, not a nested link.
   const Root = item.to ? Link : 'article';
   const linkProps = item.to ? { to: item.to, onClick: resetCursor } : {};
 
@@ -34,7 +39,7 @@ export default function WorkCard({ item }) {
       onMouseEnter={() => setCursor('view', 'View')}
       onMouseLeave={resetCursor}
       className={`group relative block overflow-hidden rounded-[28px] border bg-white shadow-sm transition-shadow duration-500 ease-premium hover:shadow-md ${
-        item.to ? 'cursor-pointer' : 'cursor-none'
+        item.to ? 'cursor-pointer' : ''
       }`}
       style={{ borderColor: 'rgba(147,197,253,0.45)' }}
     >

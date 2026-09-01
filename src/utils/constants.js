@@ -17,7 +17,7 @@ export const BRAND = {
 };
 
 export const NAV_LINKS = [
-  { label: '3D Websites', to: '/#3d-websites', section: '3d-websites' },
+  { label: '3D Websites', to: '/3d-websites', section: '3d-websites' },
   { label: 'AI Voice Agents', to: '/voice-agents', section: 'voice-agents' },
   { label: 'AI Video Production', to: '/ai-video-production', section: 'ai-video' },
   { label: 'Contact', to: '/#contact', section: 'contact' },
@@ -68,14 +68,13 @@ export const MEDIA = {
     mobile: mobileAsset('website.mp4'),
   },
   // Phase 1: the card plays a real reel instead of the placeholder. The file
-  // lives OUTSIDE the website/ prefix, under ai-video-production/ — hence
-  // reelAsset() rather than desktopAsset(). Both cuts point at the DESKTOP
-  // file on purpose: it is the asset supplied for this test and, at ~23MB,
-  // less than half the weight of the 1080-wide mobile cut (~55MB), which is
-  // far too heavy for a teaser card on a phone.
+  // lives under ai-video-production/desktop/cover/ — the optimized production
+  // version. Both desktop and mobile point at the same file: it is a 720-wide
+  // 9:16 portrait video optimized for web streaming with H.264 CRF 21, slow
+  // preset, and faststart enabled for progressive playback.
   videoProduction: {
-    desktop: reelAsset('desktop', '01/0404%20(1).mp4'),
-    mobile: reelAsset('desktop', '01/0404%20(1).mp4'),
+    desktop: reelAsset('desktop', 'cover/hf_20260827_175850_2babbc8e-cc6f-48a5-bab2-5d141fa6e4a9.mp4'),
+    mobile: reelAsset('desktop', 'cover/hf_20260827_175850_2babbc8e-cc6f-48a5-bab2-5d141fa6e4a9.mp4'),
   },
   // Optional fullscreen hero-video variant (see components/hero/HeroMedia).
   hero: {
@@ -91,19 +90,32 @@ export const MEDIA = {
 // configuration with that page — these R2 paths are never copied.
 const WEDDING_REELS = FEATURED_REEL.find((p) => p.variant === 'reels')?.reels ?? [];
 
-// The masonry grid. `span` drives the aspect ratio and therefore the rhythm.
+// The work grid. `span` drives the aspect ratio and therefore the rhythm.
 //
-// Two entries carry `reel` + `to`: WorkCard plays that reel through the SAME
-// ReelVideo player the AI Video Production page uses and turns the whole card
-// into a router Link. Entries without those keys keep the studio placeholder
-// and are untouched. Grid order is DOM order; CSS columns fill top-to-bottom,
-// so w1 and w5 are the first and third cards a visitor sees on a 3-up layout.
+// EVERY entry carries `to` — an existing route from AppRoutes/NAV_LINKS, never
+// an invented one — so WorkCard renders each card as a router Link and the whole
+// card surface (not just the corner arrow) is clickable and shows the pointer
+// cursor. Destinations follow the card's own division: AI Video Production work
+// → /ai-video-production, voice agents → /voice-agents, 3D sites → /3d-websites.
+//
+// Entries carrying `reel` play that video through the SAME ReelVideo player the
+// AI Video Production page uses (muted, looping, playsInline, no controls);
+// entries without one keep the studio placeholder.
+//
+// Desktop layout is a 3-column grid defined in components/sections/Work.jsx:
+// - Row 1: w1 | w2        (two matched 16:9 cards)
+// - Row 2: w3 ALTA, one 16:9 card spanning columns 1+2
+// - Row 3: w4 | w6        (two matched 16:9 cards)
+// - Column 3: w5 + w7, tall portrait cards, independent of the rows above
+//
+// All landscape cards use `span: 'video'` for true 16:9 aspect ratio.
+// Portrait cards use `span: 'tall'` for 3:4 aspect ratio.
 export const WORK_ITEMS = [
   {
     id: 'w1',
     title: 'AI Video Production',
     tag: 'AI Product Ad',
-    span: 'tall',
+    span: 'video',
     // Product-ad reel from the ai-video-production/desktop tree.
     // No separate mobile cut exists; both point at the same desktop source.
     reel: {
@@ -112,9 +124,34 @@ export const WORK_ITEMS = [
     },
     to: '/ai-video-production',
   },
-  { id: 'w2', title: 'Nova Voice', tag: 'AI Voice Agent', span: 'wide' },
-  { id: 'w3', title: 'Atlas Studio', tag: 'AI Video', span: 'normal' },
-  { id: 'w4', title: 'Vanta Labs', tag: '3D Website', span: 'normal' },
+  { id: 'w2', title: 'Nova Voice', tag: 'AI Voice Agent', span: 'video', to: '/voice-agents' },
+  {
+    id: 'w3',
+    title: 'ALTA Yacht Website',
+    tag: 'Premium 3D Website',
+    span: 'video',
+    reel: {
+      desktopVideo: 'https://assets.wenilo.com/3d-websites/alta/0831.mp4',
+      mobileVideo: 'https://assets.wenilo.com/3d-websites/alta/0831.mp4',
+    },
+    to: '/3d-websites',
+  },
+  {
+    id: 'w4',
+    title: 'Suvi',
+    tag: 'AI Product Ad',
+    span: 'video',
+    // reelAsset resolves to exactly
+    // https://assets.wenilo.com/ai-video-production/desktop/product%20add/0808%20(2).mp4
+    // The path stays percent-encoded here because reelAsset interpolates it
+    // verbatim (see config/assets.js) — this filename carries two spaces.
+    // No separate mobile cut exists; both point at the same desktop source.
+    reel: {
+      desktopVideo: reelAsset('desktop', 'product%20add/0808%20(2).mp4'),
+      mobileVideo:  reelAsset('desktop', 'product%20add/0808%20(2).mp4'),
+    },
+    to: '/ai-video-production',
+  },
   {
     id: 'w5',
     title: 'AI Video Production',
@@ -123,7 +160,15 @@ export const WORK_ITEMS = [
     reel: WEDDING_REELS[1],
     to: '/ai-video-production',
   },
-  { id: 'w6', title: 'Orbit Health', tag: 'AI Voice Agent', span: 'wide' },
+  { id: 'w6', title: 'Orbit Health', tag: 'AI Voice Agent', span: 'video', to: '/voice-agents' },
+  {
+    id: 'w7',
+    title: 'AI Video Production',
+    tag: 'Wedding Invitation',
+    span: 'tall',
+    reel: WEDDING_REELS[0],
+    to: '/ai-video-production',
+  },
 ];
 
 export const PROCESS_STEPS = [

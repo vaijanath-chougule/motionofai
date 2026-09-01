@@ -29,7 +29,7 @@ import { useCalendly } from '../../contexts/CalendlyContext';
  * the item lifts + scales. The row fades + rises in on view, 80ms stagger.
  */
 const CONTACTS = [
-  { Icon: Phone, label: '8600186550', brand: false, href: 'tel:+918600186550' },
+  { Icon: Phone, label: '+91 8600186550', brand: false, href: 'tel:+918600186550' },
   {
     Icon: FaInstagram,
     label: 'Instagram',
@@ -49,7 +49,7 @@ const CONTACTS = [
     Icon: FaYoutube,
     label: 'YouTube',
     brand: true,
-    href: 'https://youtube.com/@wenilo?si=fUTwPM5mQ7byyOGg',
+    href: 'https://youtube.com/@vaibhav_chougule?si=i31r90Z_H2esbUk_',
     external: true,
   },
   {

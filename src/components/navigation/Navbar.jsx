@@ -26,6 +26,7 @@ export default function Navbar() {
 
   // Route-based section: dedicated pages are always active regardless of scroll.
   const routeSection =
+    location.pathname === '/3d-websites' ? '3d-websites' :
     location.pathname === '/voice-agents' ? 'voice-agents' :
     location.pathname === '/ai-video-production' ? 'ai-video' :
     null;
@@ -161,7 +162,21 @@ export default function Navbar() {
             })}
           </ul>
 
-          <div className="ml-auto hidden lg:block">
+          <div className="ml-auto hidden items-center gap-3 lg:flex">
+            <a
+              href="https://youtube.com/@vaibhav_chougule?si=i31r90Z_H2esbUk_"
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={() => setCursor('hover')}
+              onMouseLeave={resetCursor}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FF0000] transition-all duration-300 hover:scale-105 hover:shadow-[0_4px_16px_-4px_rgba(255,0,0,0.4)]"
+              aria-label="YouTube"
+            >
+              <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.582 2.186A2.5 2.5 0 0017.826.418C16.254 0 10 0 10 0S3.746 0 2.174.418A2.5 2.5 0 00.418 2.186C0 3.758 0 7 0 7s0 3.242.418 4.814a2.5 2.5 0 001.756 1.768C3.746 14 10 14 10 14s6.254 0 7.826-.418a2.5 2.5 0 001.756-1.768C20 10.242 20 7 20 7s0-3.242-.418-4.814z" fill="white"/>
+                <path d="M8 10V4l5.196 3L8 10z" fill="#FF0000"/>
+              </svg>
+            </a>
             <MagneticButton
               onClick={openCalendly}
               variant="primary"

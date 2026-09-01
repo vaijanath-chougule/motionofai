@@ -658,58 +658,7 @@ export default function VoiceAgentPage() {
                     </div>
                   </div>
 
-                  {/* ── MOBILE ONLY: static phone at bottom ── */}
-                  <div data-reveal className="flex justify-center opacity-0 md:hidden">
-                    <div
-                      className="relative overflow-hidden rounded-[2.2rem] bg-ink p-[8px] shadow-[0_30px_80px_-30px_rgba(17,17,17,0.45)]"
-                      style={{ width: 'min(54vw, 200px)', aspectRatio: '9/19' }}
-                    >
-                      <div className="relative h-full w-full overflow-hidden rounded-[1.75rem] bg-canvas">
-                        {/* screen glow */}
-                        <div
-                          className="pointer-events-none absolute inset-0"
-                          style={{
-                            background:
-                              'radial-gradient(120% 90% at 50% 42%, rgba(37,99,235,0.18), rgba(255,255,255,0) 62%)',
-                          }}
-                        />
-                        {/* notch */}
-                        <div className="absolute left-1/2 top-2.5 h-1 w-12 -translate-x-1/2 rounded-full bg-ink/70" />
-                        {/* screen content */}
-                        <div className="absolute inset-0">
-                          {/* top: live dot + label */}
-                          <div className="absolute left-1/2 top-7 flex -translate-x-1/2 flex-col items-center gap-1.5">
-                            <span className="relative flex h-1.5 w-1.5">
-                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/60" />
-                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-                            </span>
-                            <span className="flex flex-col items-center text-[8px] font-semibold uppercase leading-tight tracking-eyebrow text-ink">
-                              <span>Get</span>
-                              <span>More</span>
-                              <span>Customers</span>
-                            </span>
-                          </div>
-                          {/* bottom: waveform + brand */}
-                          <div className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-3">
-                            <div className="flex h-5 items-center gap-[2px]">
-                              {WAVE.map((h, i) => (
-                                <span
-                                  key={i}
-                                  className="w-[2px] animate-breathe rounded-full bg-accent/80"
-                                  style={{
-                                    height: `${Math.round(h * 0.62)}px`,
-                                    animationDelay: `${i * 0.12}s`,
-                                    animationDuration: '2.2s',
-                                  }}
-                                />
-                              ))}
-                            </div>
-                            <p className="text-[9px] font-medium text-muted">wenilo</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Mobile phone animation removed */}
 
                 </div>
               </div>
