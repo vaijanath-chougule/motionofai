@@ -162,7 +162,7 @@ export default function Navbar() {
             })}
           </ul>
 
-          <div className="ml-auto hidden items-center gap-3 lg:flex">
+          <div className="ml-auto flex items-center gap-3">
             <a
               href="https://youtube.com/@vaibhav_chougule?si=i31r90Z_H2esbUk_"
               target="_blank"
@@ -177,14 +177,16 @@ export default function Navbar() {
                 <path d="M8 10V4l5.196 3L8 10z" fill="#FF0000"/>
               </svg>
             </a>
-            <MagneticButton
-              onClick={openCalendly}
-              variant="primary"
-              className="px-6 py-3 text-sm"
-              strength={0.5}
-            >
-              {CTA.primary}
-            </MagneticButton>
+            <div className="hidden lg:block">
+              <MagneticButton
+                onClick={openCalendly}
+                variant="primary"
+                className="px-6 py-3 text-sm"
+                strength={0.5}
+              >
+                {CTA.primary}
+              </MagneticButton>
+            </div>
           </div>
 
           {/* Mobile trigger */}

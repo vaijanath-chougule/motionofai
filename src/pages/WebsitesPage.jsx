@@ -113,9 +113,9 @@ export default function WebsitesPage() {
       </section>
 
       {/* Portfolio Grid */}
-      <section ref={gridScope} className="relative bg-canvas pb-24 pt-0 md:pb-32 lg:pb-40">
-        <div className="shell">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:gap-10">
+      <section ref={gridScope} className="relative bg-canvas px-6 pb-24 pt-0 md:px-10 md:pb-32 lg:pb-40">
+        <div className="shell max-w-7xl">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 md:gap-8 lg:gap-10">
             {WEBSITES_PORTFOLIO.map((project) => (
               <div key={project.id} className="reveal">
                 <WebsiteCard project={project} />
