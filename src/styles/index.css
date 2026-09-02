@@ -578,37 +578,69 @@
     height: 100% !important;
   }
 
-  /* Fix 5: Mobile navbar YouTube button - compact rounded rectangle style
-     Transform the circular button into a standard YouTube-style button */
+  /* Fix 5: Mobile navbar YouTube button - proper YouTube style without nested containers
+     Remove outer red rectangle, make it a clean YouTube button */
   nav a[href*="youtube"] {
-    /* Change from circle to rounded rectangle */
-    width: 42px !important;
-    height: 32px !important;
-    border-radius: 8px !important;
+    /* Compact YouTube button dimensions */
+    width: 40px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    padding: 0 !important;
 
-    /* Maintain YouTube red background */
+    /* YouTube red background */
     background-color: #FF0000 !important;
 
-    /* Position to the left of hamburger with proper spacing */
+    /* Remove any extra wrapper styling */
+    box-shadow: none !important;
+    border: none !important;
+
+    /* Position next to hamburger */
     margin-right: 0.5rem;
+    margin-left: 0;
   }
 
-  /* Scale down the YouTube icon slightly for the compact button */
+  /* Scale the YouTube play icon appropriately */
   nav a[href*="youtube"] svg {
-    width: 18px !important;
-    height: 13px !important;
+    width: 16px !important;
+    height: 11px !important;
   }
 
-  /* Ensure proper flexbox centering in the compact button */
+  /* Ensure proper centering */
   nav a[href*="youtube"] {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
   }
 
-  /* Adjust navbar item spacing on mobile to prevent crowding */
-  nav .ml-auto.flex.items-center.gap-3 {
+  /* Adjust navbar right-side spacing for better YouTube + hamburger alignment */
+  nav > div.ml-auto.flex.items-center {
     gap: 0.5rem !important;
-    margin-left: auto !important;
+  }
+
+  /* Fix 6: 3D Websites page description text - prevent horizontal overflow
+     "Immersive, interactive 3D websites engineered to make brands impossible to ignore." */
+  div[class*="inline-flex"][class*="rounded-full"][class*="border"] p {
+    max-width: 90vw !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.5 !important;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  /* Ensure the pill container itself can wrap */
+  div[class*="inline-flex"][class*="rounded-full"][class*="border"] {
+    max-width: 95vw !important;
+    white-space: normal !important;
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    padding: 0.75rem 1.25rem !important;
+  }
+
+  /* Additional specificity for the 3D Websites intro text */
+  section[class*="bg-canvas"] div[class*="justify-center"] > div[class*="inline-flex"] p {
+    font-size: clamp(0.875rem, 3.5vw, 0.9375rem) !important;
+    text-align: center;
   }
 }

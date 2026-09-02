@@ -7,17 +7,19 @@ import { FEATURED_REEL } from '../../data/videoPortfolio';
 import Typewriter from '../motion/Typewriter';
 import CinematicReel from '../video/CinematicReel';
 import MobileReel from '../video/MobileReel';
+import MobileSwipeReel from '../video/MobileSwipeReel';
 
 /**
  * AI Video Production — the cinematic showreel. A pure-white, Apple-inspired
  * stage that plays wenilo's five best AI productions like a premium film
  * reel: one video commands the centre at a time.
  *
- *   • Desktop AND mobile: the same PINNED horizontal reel. Cards glide
- *     through the centre on scroll; the centred film plays while its
- *     neighbours shrink, soften and blur. Phones get the identical
- *     interaction — only the geometry and a wenilo progress pill differ.
+ *   • Desktop: PINNED horizontal reel. Cards glide through the centre on scroll;
+ *     the centred film plays while its neighbours shrink, soften and blur.
  *     (see CinematicReel)
+ *   • Mobile: HORIZONTAL SWIPE CAROUSEL. Native touch scrolling with snap points.
+ *     User swipes left/right to navigate between videos. No vertical scrolling
+ *     required to see the next video. (see MobileSwipeReel)
  *   • Reduced-motion only: the reel unfolds as a vertical stack, each video
  *     autoplaying while on screen — nothing pins or scrubs. (see MobileReel)
  *
@@ -28,8 +30,9 @@ export default function AIVideoProduction() {
   const scope = useRef(null);
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const reduce = prefersReducedMotion();
-  // Phones pin too — only reduced-motion falls back to the vertical stack.
-  const pinned = !reduce;
+  // Desktop pins; mobile swipes; reduced-motion falls back to vertical stack.
+  const usePinnedReel = !isMobile && !reduce;
+  const useSwipeReel = isMobile && !reduce;
 
   // Header reveal — film-cut fade up, matching the rest of the site.
   useIsomorphicLayoutEffect(() => {
@@ -58,19 +61,22 @@ export default function AIVideoProduction() {
       // hidden in CSS (opacity:0, y:28px), so we animate TO the visible state
       // — matching the site's canonical useScrollReveal pattern. (Using
       // gsap.from here would tween back to the CSS 0 and never show.)
-      gsap.utils.toArray('.reveal', el).forEach((card) => {
-        gsap.to(card, {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: EASE.premium,
-          scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+      // Only applies to the reduced-motion MobileReel vertical stack.
+      if (!usePinnedReel && !useSwipeReel) {
+        gsap.utils.toArray('.reveal', el).forEach((card) => {
+          gsap.to(card, {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            ease: EASE.premium,
+            scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+          });
         });
-      });
+      }
     }, el);
 
     return () => ctx.revert();
-  }, [reduce, isMobile]);
+  }, [reduce, usePinnedReel, useSwipeReel]);
 
   return (
     <section id="ai-video" ref={scope} className="relative overflow-hidden bg-canvas">
@@ -148,7 +154,7 @@ export default function AIVideoProduction() {
 
       {/* The reel. A very soft ambient glow sits behind the cards so they
           feel curated rather than dropped onto a blank canvas. */}
-      <div className={`relative ${pinned ? 'mt-10 md:mt-16' : 'mt-10 pb-8'}`}>
+      <div className={`relative ${usePinnedReel ? 'mt-10 md:mt-16' : 'mt-10 pb-8'}`}>
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
@@ -157,8 +163,10 @@ export default function AIVideoProduction() {
               'radial-gradient(ellipse 80% 55% at 50% 28%, rgba(37,99,235,0.07) 0%, rgba(124,58,237,0.04) 48%, transparent 70%)',
           }}
         />
-        {pinned ? (
-          <CinematicReel projects={FEATURED_REEL} mobile={isMobile} />
+        {usePinnedReel ? (
+          <CinematicReel projects={FEATURED_REEL} mobile={false} />
+        ) : useSwipeReel ? (
+          <MobileSwipeReel projects={FEATURED_REEL} />
         ) : (
           <MobileReel projects={FEATURED_REEL} />
         )}
