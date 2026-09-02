@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import { gsap, ScrollTrigger, EASE, DUR } from '../../animations/gsap';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import { useParallax } from '../../hooks/useParallax';
@@ -7,6 +7,7 @@ import ScrollIndicator from './ScrollIndicator';
 import MagneticButton from '../common/MagneticButton';
 import { CTA } from '../../utils/constants';
 import { useCalendly } from '../../contexts/CalendlyContext';
+import { useSmoothScroll } from '../../contexts/SmoothScrollContext';
 import { prefersReducedMotion, isTouch } from '../../utils/device';
 
 const OFFERINGS = ['Premium 3D Websites', 'AI Voice Agents', 'AI Video Production'];
@@ -27,8 +28,18 @@ export default function Hero() {
   const seqRef = useRef(null);
   const parallaxRef = useParallax({ max: 16 });
   const { openCalendly } = useCalendly();
+  const { scrollTo } = useSmoothScroll();
   const reduce = prefersReducedMotion();
   const touch = isTouch();
+
+  // Scroll to the "Proof, not promises." work section with navbar offset.
+  const handleViewWork = useCallback((e) => {
+    e.preventDefault();
+    const el = document.getElementById('work');
+    if (!el) return;
+    // ~80px accounts for the floating navbar height so the heading isn't hidden under it.
+    scrollTo(el, { offset: -80 });
+  }, [scrollTo]);
 
   useIsomorphicLayoutEffect(() => {
     const el = scene.current;
@@ -170,7 +181,7 @@ export default function Hero() {
                 </MagneticButton>
               </span>
               <span data-hero-cta>
-                <MagneticButton to="/#work" variant="secondary" strength={0.5}>
+                <MagneticButton to="/#work" onClick={handleViewWork} variant="secondary" strength={0.5}>
                   {CTA.secondary}
                   <Arrow />
                 </MagneticButton>

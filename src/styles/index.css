@@ -518,3 +518,97 @@
     scrollbar-width: none;
   }
 }
+
+/* ============================================================
+   MOBILE-ONLY RESPONSIVE FIXES
+   All changes scoped to mobile breakpoint only - desktop unchanged
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Fix 1: Hero ticker/eyebrow text - prevent horizontal clipping
+     Make the "WE WILL HELP YOU TO INTEGRATE AI IN YOUR BUSINESS" text wrap properly */
+  [data-hero-eyebrow] span span {
+    white-space: normal !important;
+    text-align: center;
+    display: inline-block;
+    max-width: 85vw;
+    line-height: 1.5;
+    padding: 0.5rem 1.25rem;
+  }
+
+  /* Fix 2: 3D Websites page heading - force exactly 3 lines
+     "Websites that" / "feel like" / "experiences." */
+  h1[class*="text-display-lg"] {
+    font-size: clamp(2.75rem, 12vw, 3.75rem) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.025em !important;
+    max-width: 88vw !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Remove the line break to allow natural wrapping into 3 lines */
+  h1[class*="text-display-lg"] br:first-of-type {
+    display: none;
+  }
+
+  /* Fix 3: 3D Websites portfolio page cards - make significantly wider
+     Target the portfolio grid section specifically */
+  section[class*="pb-24"][class*="pt-0"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Ensure the inner shell expands to full width */
+  section[class*="pb-24"][class*="pt-0"] > div[class*="shell"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Fix 4: ServiceCard3D video aspect ratio - force 16:9 on mobile home page
+     The home page 3D Websites card currently shows 9:16, should be 16:9 */
+  article#3d-websites > div > div:first-child {
+    aspect-ratio: 16/9 !important;
+  }
+
+  /* Ensure video covers the 16:9 container properly */
+  article#3d-websites video {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Fix 5: Mobile navbar YouTube button - compact rounded rectangle style
+     Transform the circular button into a standard YouTube-style button */
+  nav a[href*="youtube"] {
+    /* Change from circle to rounded rectangle */
+    width: 42px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+
+    /* Maintain YouTube red background */
+    background-color: #FF0000 !important;
+
+    /* Position to the left of hamburger with proper spacing */
+    margin-right: 0.5rem;
+  }
+
+  /* Scale down the YouTube icon slightly for the compact button */
+  nav a[href*="youtube"] svg {
+    width: 18px !important;
+    height: 13px !important;
+  }
+
+  /* Ensure proper flexbox centering in the compact button */
+  nav a[href*="youtube"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Adjust navbar item spacing on mobile to prevent crowding */
+  nav .ml-auto.flex.items-center.gap-3 {
+    gap: 0.5rem !important;
+    margin-left: auto !important;
+  }
+}
