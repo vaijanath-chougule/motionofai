@@ -578,43 +578,16 @@
     height: 100% !important;
   }
 
-  /* Fix 5: Mobile navbar YouTube button - proper YouTube style without nested containers
-     Remove outer red rectangle, make it a clean YouTube button */
-  nav a[href*="youtube"] {
-    /* Compact YouTube button dimensions */
-    width: 40px !important;
-    height: 28px !important;
-    border-radius: 6px !important;
-    padding: 0 !important;
-
-    /* YouTube red background */
-    background-color: #FF0000 !important;
-
-    /* Remove any extra wrapper styling */
-    box-shadow: none !important;
-    border: none !important;
-
-    /* Position next to hamburger */
-    margin-right: 0.5rem;
-    margin-left: 0;
+  /* Mobile YouTube button positioning — ensure proper alignment next to hamburger */
+  nav a[href*="youtube"].lg\:hidden {
+    margin-right: 0.75rem;
   }
 
-  /* Scale the YouTube play icon appropriately */
-  nav a[href*="youtube"] svg {
-    width: 16px !important;
-    height: 11px !important;
-  }
-
-  /* Ensure proper centering */
-  nav a[href*="youtube"] {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* Adjust navbar right-side spacing for better YouTube + hamburger alignment */
-  nav > div.ml-auto.flex.items-center {
-    gap: 0.5rem !important;
+  /* Fix 7: Mobile 3D Website card - force 16:9 aspect ratio instead of 9:16 portrait
+     The video container currently uses aspect-[9/16] on mobile which is too tall.
+     Override to 16:9 landscape for proper video presentation. */
+  #3d-websites .aspect-\[9\/16\] {
+    aspect-ratio: 16 / 9 !important;
   }
 
   /* Fix 6: 3D Websites page description text - prevent horizontal overflow
