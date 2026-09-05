@@ -16,7 +16,7 @@ import { isLowPowerDevice, isTouch } from '../utils/device';
  * @param {(i:number)=>string} [getFallbackUrl] 1-based index -> fallback (JPG)
  * @param {number}  concurrency parallel image requests
  */
-export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurrency = 6 }) {
+export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurrency = 8 }) {
   const canvasRef = useRef(null);
   const imagesRef = useRef([]);
   const loadedRef = useRef([]); // boolean per frame
@@ -64,6 +64,10 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
 
     const ctx = getCtx();
     if (!ctx) return;
+
+    // Clear the previous frame for cleaner transitions
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     const cw = canvas.width;
     const ch = canvas.height;
     const ir = img.naturalWidth / img.naturalHeight;
@@ -119,8 +123,41 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
     resize();
 
     let cancelled = false;
-    let cursor = 0;
     let inFlight = 0;
+
+    // CRITICAL OPTIMIZATION: Priority loading strategy
+    // Load frames in this order for smooth scrolling:
+    // 1. Every 4th frame first (0, 4, 8, 12...) - provides skeleton coverage
+    // 2. Every 2nd frame (2, 6, 10, 14...) - fills half the gaps
+    // 3. Remaining frames (1, 3, 5, 7...) - completes the sequence
+    // This ensures smooth scrolling even before all frames load.
+    const loadOrder = [];
+
+    // Phase 1: Every 4th frame (0, 4, 8, 12, 16...)
+    for (let i = 0; i < frameCount; i += 4) {
+      loadOrder.push(i);
+    }
+
+    // Phase 2: Every other frame not yet added (2, 6, 10, 14...)
+    for (let i = 2; i < frameCount; i += 4) {
+      loadOrder.push(i);
+    }
+
+    // Phase 3: Fill remaining gaps (1, 3, 5, 7, 9, 11...)
+    for (let i = 1; i < frameCount; i += 2) {
+      if (!loadOrder.includes(i)) {
+        loadOrder.push(i);
+      }
+    }
+
+    // Phase 4: Any remaining frames
+    for (let i = 0; i < frameCount; i++) {
+      if (!loadOrder.includes(i)) {
+        loadOrder.push(i);
+      }
+    }
+
+    let cursor = 0;
 
     const onOne = (i, img) => {
       if (cancelled) return;
@@ -128,7 +165,7 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
       loadedRef.current[i] = true;
       setLoadedCount((c) => c + 1);
       // Repaint if this frame is at/near what we currently want.
-      if (Math.abs(i - Math.round(targetRef.current)) <= 1 || drawnRef.current === -1) {
+      if (Math.abs(i - Math.round(targetRef.current)) <= 2 || drawnRef.current === -1) {
         scheduleDraw();
       }
       inFlight -= 1;
@@ -136,16 +173,14 @@ export function useImageSequence({ frameCount, getUrl, getFallbackUrl, concurren
     };
 
     function pump() {
-      while (!cancelled && inFlight < concurrency && cursor < frameCount) {
-        const i = cursor;
+      while (!cancelled && inFlight < concurrency && cursor < loadOrder.length) {
+        const i = loadOrder[cursor];
         cursor += 1;
         inFlight += 1;
         const img = new Image();
         img.decoding = 'async';
-        // The opening frame is the hero's LCP — fetch it ahead of the rest
-        // (matches the <link rel="preload"> in index.html); later frames
-        // stay at default priority so they don't crowd critical resources.
-        img.fetchPriority = i === 0 ? 'high' : 'auto';
+        // High priority for first 10 frames in load order (skeleton)
+        img.fetchPriority = cursor <= 10 ? 'high' : 'auto';
         img.onload = () => onOne(i, img);
         img.onerror = () => {
           // WebP undecodable (rare) → retry this frame once as JPG.

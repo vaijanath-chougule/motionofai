@@ -67,13 +67,14 @@ export default function Hero() {
       // Scrub the frame sequence across the pinned scene. The scene is kept
       // short (see section height below) so even a small scroll advances
       // many frames — high sensitivity, tightly connected to the input. A
-      // light scrub (low catch-up time) keeps that near 1:1 with the scroll
+      // lighter scrub (lower catch-up time) keeps that near 1:1 with the scroll
       // rather than lagging behind it, while still smoothing the stepping.
+      // Reduced from 0.4 to 0.2 for tighter scroll response and smoother playback.
       ScrollTrigger.create({
         trigger: el,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 0.4,
+        scrub: touch ? 0.15 : 0.2,
         onUpdate: (self) => seq?.setProgress(self.progress),
       });
 
