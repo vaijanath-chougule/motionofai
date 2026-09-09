@@ -31,7 +31,7 @@ export const WEBSITES_PORTFOLIO = [
     title: 'ELVARA — Fit Out Services',
     description: 'Premium fit-out services brought to life through an immersive digital experience.',
     video: 'https://assets.wenilo.com/3d-websites/elvora/elvora-web.mp4',
-    url: 'https://wenilo-elvara.netlify.app/',
+    url: 'https://elvara-website-beta.vercel.app/',
   },
   {
     id: 'swag',
@@ -49,6 +49,6 @@ export const WEBSITES_PORTFOLIO = [
     title: 'Forma — Commercial Interior Contractor',
     description: 'Precision-built commercial interiors designed to elevate every space.',
     video: 'https://assets.wenilo.com/3d-websites/forma/forma-web.mp4',
-    url: 'https://forma-dubai.higgsfield.app/',
+    url: 'https://forma-dubai.wenilo.workers.dev/',
   },
 ];

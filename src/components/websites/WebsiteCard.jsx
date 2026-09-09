@@ -66,8 +66,8 @@ export default function WebsiteCard({ project }) {
       }}
       aria-label={`View ${project.title} website`}
     >
-      {/* 16:9 Video Preview */}
-      <div className="relative overflow-hidden rounded-[24px]" style={{ aspectRatio: '16 / 9' }}>
+      {/* 16:9 Video Preview - Larger on mobile */}
+      <div className="relative -mx-2 overflow-hidden rounded-[24px] md:mx-0" style={{ aspectRatio: '16 / 9' }}>
         <video
           ref={videoRef}
           className="h-full w-full object-cover"
