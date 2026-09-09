@@ -45,7 +45,13 @@ export default function MobileReel({ projects }) {
         project.variant === 'reels' ? (
           <article key={project.id} className="reveal">
             <div className="relative mx-auto aspect-[9/16] w-full max-w-[76vw]">
-              <ReelShowcase project={project} near active mobile />
+              <ReelShowcase
+                project={project}
+                near
+                active
+                mobile
+                collectionId={project.id}
+              />
             </div>
           </article>
         ) : (
@@ -73,6 +79,8 @@ export default function MobileReel({ projects }) {
                     label={project.category}
                     className="h-full w-full"
                     muted={mutedCards.has(project.id)}
+                    videoId={project.id}
+                    collectionId="mobile-reel"
                     darkFallback
                   />
                 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMediaQuery, MOBILE_QUERY } from '../../hooks/useMediaQuery';
 import { prefersReducedMotion } from '../../utils/device';
+import playbackManager from '../../utils/videoPlaybackManager';
 
 /**
  * Device-aware cinematic video.
@@ -15,6 +16,10 @@ import { prefersReducedMotion } from '../../utils/device';
  *   the poster), so there is never a broken player and ZERO layout shift.
  * • object-fit: cover; the box (aspect ratio, radius) is owned by the
  *   parent via `className`.
+ *
+ * PRIORITY PLAYBACK:
+ * Integrates with the global playback manager. When muted=false, claims
+ * exclusive priority and pauses all other videos across all collections.
  */
 export default function ResponsiveVideo({
   desktopSrc,
@@ -28,6 +33,10 @@ export default function ResponsiveVideo({
   /** Solid black loading state instead of the light placeholder gradient.
    *  Used for Cards 2–5 in the reduced-motion MobileReel path. */
   darkFallback = false,
+  /** Unique ID for priority playback system */
+  videoId,
+  /** Collection ID for grouping */
+  collectionId,
 }) {
   const isMobile = useMediaQuery(MOBILE_QUERY);
   const src = isMobile ? mobileSrc ?? desktopSrc : desktopSrc ?? mobileSrc;
@@ -38,6 +47,18 @@ export default function ResponsiveVideo({
   const [mounted, setMounted] = useState(false); // has entered viewport once
   const [playing, setPlaying] = useState(false); // painting real frames
   const [failed, setFailed] = useState(false); // src missing / undecodable
+  const playGenerationRef = useRef(null);
+
+  // Register with the global playback manager
+  useEffect(() => {
+    if (!videoId || !videoRef.current) return undefined;
+
+    playbackManager.registerVideo(videoId, videoRef.current, collectionId);
+
+    return () => {
+      playbackManager.unregisterVideo(videoId);
+    };
+  }, [videoId, collectionId, mounted]);
 
   // A newly-resolved source (breakpoint crossed) starts fresh.
   useEffect(() => {
@@ -46,6 +67,7 @@ export default function ResponsiveVideo({
   }, [src]);
 
   // Mount latch + play/pause on viewport enter/leave.
+  // NOW GATED BY THE GLOBAL PLAYBACK MANAGER.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el || reduce || !src) return undefined;
@@ -57,7 +79,22 @@ export default function ResponsiveVideo({
       ([entry]) => {
         if (entry.isIntersecting) {
           setMounted(true);
-          videoRef.current?.play?.().catch(() => {});
+
+          // Check with playback manager before playing
+          if (videoId) {
+            const generation = playbackManager.requestPlay(videoId);
+            if (generation !== null) {
+              playGenerationRef.current = generation;
+              Promise.resolve().then(() => {
+                if (playGenerationRef.current === generation && playbackManager.canPlay(videoId)) {
+                  videoRef.current?.play?.().catch(() => {});
+                }
+              });
+            }
+          } else {
+            // No videoId - legacy behavior for non-priority videos
+            videoRef.current?.play?.().catch(() => {});
+          }
         } else {
           videoRef.current?.pause?.();
         }
@@ -66,13 +103,40 @@ export default function ResponsiveVideo({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [reduce, src]);
+  }, [reduce, src, videoId]);
 
   // Apply muted imperatively so toggling audio never restarts playback.
+  // PRIORITY SYSTEM: When unmuted, claim exclusive priority.
   useEffect(() => {
     const v = videoRef.current;
-    if (v) v.muted = muted;
-  }, [muted, playing]);
+    if (!v) return;
+
+    v.muted = muted;
+
+    // Priority management based on muted state (only if videoId is provided)
+    if (videoId) {
+      if (!muted) {
+        // Claim exclusive priority
+        playbackManager.claimPriority(videoId);
+
+        // Ensure this video plays
+        const generation = playbackManager.getGeneration();
+        playGenerationRef.current = generation;
+
+        Promise.resolve().then(() => {
+          if (playGenerationRef.current === generation && playbackManager.canPlay(videoId)) {
+            v.play?.().catch(() => {});
+          }
+        });
+      } else {
+        // Release priority if this video owns it
+        if (playbackManager.isPriority(videoId)) {
+          playbackManager.releasePriority();
+          v.pause?.();
+        }
+      }
+    }
+  }, [muted, playing, videoId]);
 
   const showVideo = src && mounted && !reduce && !failed;
 

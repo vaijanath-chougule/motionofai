@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMediaQuery, MOBILE_QUERY } from '../../hooks/useMediaQuery';
+import playbackManager from '../../utils/videoPlaybackManager';
 
 /**
  * ReelVideo — a scroll-CONTROLLED cinematic video for the desktop reel.
@@ -31,6 +32,11 @@ import { useMediaQuery, MOBILE_QUERY } from '../../hooks/useMediaQuery';
  * make itself: `onBufferAhead` (seconds of contiguous data past the playhead)
  * and `onUnavailable` (this source will never load). Both are held in refs, so
  * a parent may pass fresh closures every render without re-binding listeners.
+ *
+ * PRIORITY PLAYBACK:
+ * Integrates with the global playback manager. When a video is unmuted, it
+ * claims exclusive priority and all other videos are paused. Only the priority
+ * video may play until it is muted again or another video claims priority.
  */
 export default function ReelVideo({
   desktopSrc,
@@ -43,6 +49,10 @@ export default function ReelVideo({
   allowLoad = true,
   onBufferAhead,
   onUnavailable,
+  /** Unique ID for this video (required for priority system) */
+  videoId,
+  /** Collection ID for grouping (e.g., 'jewellery', 'wedding') */
+  collectionId,
   /** When true, currentTime is reset to 0 each time the card becomes active.
    *  Defaults false so Card 1 (ReelShowcase sub-reels) is completely unchanged. */
   resetOnActivate = false,
@@ -58,12 +68,26 @@ export default function ReelVideo({
   const [playing, setPlaying] = useState(false); // real frames painting
   const [failed, setFailed] = useState(false);
 
+  // Track the generation when we last requested play, to detect stale requests
+  const playGenerationRef = useRef(null);
+
   // Callbacks live in refs so the listener effect below binds once per mount
   // rather than on every parent render.
   const bufferCb = useRef(onBufferAhead);
   const unavailableCb = useRef(onUnavailable);
   bufferCb.current = onBufferAhead;
   unavailableCb.current = onUnavailable;
+
+  // Register with the global playback manager
+  useEffect(() => {
+    if (!videoId || !videoRef.current) return undefined;
+
+    playbackManager.registerVideo(videoId, videoRef.current, collectionId);
+
+    return () => {
+      playbackManager.unregisterVideo(videoId);
+    };
+  }, [videoId, collectionId, mounted]);
 
   // Latch mount the first time this card nears the centre — and release it
   // again the moment the scheduler withdraws permission, which is what
@@ -85,24 +109,75 @@ export default function ReelVideo({
   // Play only when centred; pause otherwise. Only one video decodes at once.
   // `resetOnActivate` resets currentTime to 0 on enter so Cards 2–5 always
   // restart from the beginning — Card 1 leaves this false and is unaffected.
+  // NOW GATED BY THE GLOBAL PLAYBACK MANAGER — only plays if allowed.
   useEffect(() => {
     const v = videoRef.current;
-    if (!v) return;
+    if (!v || !videoId) return;
+
     if (active) {
+      // Check with the playback manager before playing
+      const generation = playbackManager.requestPlay(videoId);
+
+      if (generation === null) {
+        // Play request rejected — another video has priority
+        v.pause?.();
+        return;
+      }
+
+      // Play request approved — store generation and attempt play
+      playGenerationRef.current = generation;
+
       if (resetOnActivate) v.currentTime = 0;
-      v.play?.().catch(() => {});
+
+      // Use a microtask to ensure the generation is still valid
+      Promise.resolve().then(() => {
+        // Verify generation hasn't changed (no newer priority claim)
+        if (playGenerationRef.current === generation && playbackManager.canPlay(videoId)) {
+          v.play?.().catch(() => {
+            // Ignore autoplay errors — likely policy restriction
+          });
+        }
+      });
     } else {
       v.pause?.();
     }
-  }, [active, mounted, resetOnActivate]);
+  }, [active, mounted, resetOnActivate, videoId]);
 
   // Audio gate — a live property write on the element itself. No re-mount, no
   // seek, no reload: the frame on screen keeps playing and the sound simply
   // appears or disappears. Re-applied after (re)mount and after a source swap.
+  // PRIORITY SYSTEM: When unmuted, claim exclusive priority and pause all others.
   useEffect(() => {
     const v = videoRef.current;
-    if (v) v.muted = muted;
-  }, [muted, mounted, src]);
+    if (!v || !videoId) return;
+
+    // Apply muted state to the element
+    v.muted = muted;
+
+    // Priority management based on muted state
+    if (!muted) {
+      // This video is being unmuted — claim exclusive priority
+      playbackManager.claimPriority(videoId);
+
+      // Ensure this video is actually playing (it now has priority)
+      if (active && mounted) {
+        const generation = playbackManager.getGeneration();
+        playGenerationRef.current = generation;
+
+        Promise.resolve().then(() => {
+          if (playGenerationRef.current === generation && playbackManager.canPlay(videoId)) {
+            v.play?.().catch(() => {});
+          }
+        });
+      }
+    } else {
+      // This video is being muted — release priority if it owns it
+      if (playbackManager.isPriority(videoId)) {
+        playbackManager.releasePriority();
+        v.pause?.();
+      }
+    }
+  }, [muted, mounted, src, videoId, active]);
 
   const showVideo = src && mounted && !failed;
 

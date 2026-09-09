@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { FocusItem, useFocusGallery } from '../motion/FocusGallery';
+import playbackManager from '../../utils/videoPlaybackManager';
 import ReelAudioButton from './ReelAudioButton';
 import ReelCard from './ReelCard';
 import ReelVideo from './ReelVideo';
@@ -30,6 +31,10 @@ import ReelVideo from './ReelVideo';
  * playback. Sound is dropped automatically when the slot leaves centre or the
  * sounding reel is swiped off screen — no invisible audio, ever.
  *
+ * PRIORITY PLAYBACK — integrated with the global playback manager. When any
+ * video is unmuted, it claims exclusive priority and ALL other videos across
+ * ALL collections are paused. The manager enforces ONE unmuted video at a time.
+ *
  * PERFORMANCE — mount is gated on `near` (the parent's own latch, so far cards
  * never download), playback on `active && on-screen`. On phones that means a
  * single decoding video even though five are mounted, tracked by one
@@ -48,9 +53,10 @@ import ReelVideo from './ReelVideo';
  *     stops counting against that budget once it holds WARM_ENOUGH seconds, so
  *     the queue drains steadily instead of stampeding on first paint.
  *   • Unmuting a reel makes it the priority stream: it is admitted instantly,
- *     no new background reel is admitted, and every admitted reel that is off
- *     screen has its source withdrawn — cancelling those range requests and
- *     leaving the connection to the reel actually being watched.
+ *     background warming is STOPPED (not just throttled to 1), and every
+ *     admitted reel that is off screen has its source withdrawn — cancelling
+ *     those range requests and leaving the connection to the reel actually
+ *     being watched.
  *   • Background admission resumes only once the priority reel holds
  *     PRIORITY_BUFFER_HI seconds ahead of its playhead, and is withdrawn again
  *     if that cushion falls below PRIORITY_BUFFER_LO. The gap between the two
@@ -93,6 +99,8 @@ export default function ReelShowcase({
   near = true,
   active = true,
   mobile = false,
+  /** Unique collection ID for the global playback manager */
+  collectionId = 'reel-showcase',
 }) {
   // Memoised so the scheduler effect below never sees a fresh [] each render.
   const reels = useMemo(() => project.reels ?? [], [project.reels]);
@@ -228,10 +236,12 @@ export default function ReelShowcase({
 
   // The admission decision itself. Recomputed only when an input genuinely
   // changes — never per buffer event.
+  // UPDATED: When in priority mode, STOP background warming entirely.
   useEffect(() => {
     setAllowed((prev) => {
       const next = new Set();
       const holdBackground = Boolean(soloId) && !priorityReady;
+      const inPriorityMode = Boolean(soloId);
 
       // 1. The reel being watched always loads, ahead of everything else.
       if (soloId) next.add(soloId);
@@ -245,11 +255,11 @@ export default function ReelShowcase({
       });
 
       // 3. Admit newcomers up to the warming budget, nearest-first, unless we
-      //    are clearing the way for the priority reel. While a reel is being
-      //    watched the budget narrows to one, so background reels keep filling
-      //    in — just gently, one at a time, never as a pack.
-      if (!holdBackground) {
-        const budget = soloId ? 1 : MAX_WARMING;
+      //    are in PRIORITY_MODE. When a video is unmuted, STOP all background
+      //    warming to give it exclusive resources.
+      if (!holdBackground && !inPriorityMode) {
+        // NORMAL_MODE: allow background warming up to MAX_WARMING
+        const budget = MAX_WARMING;
         let slots = budget - [...next].filter((id) => !warm.has(id)).length;
         for (const r of reels) {
           if (slots <= 0) break;
@@ -258,6 +268,7 @@ export default function ReelShowcase({
           slots -= 1;
         }
       }
+      // When inPriorityMode=true, no background warming happens at all
 
       return sameSet(prev, next) ? prev : next;
     });
@@ -343,6 +354,8 @@ export default function ReelShowcase({
                   active={active && onScreen}
                   muted={soloId !== id}
                   allowLoad={allowed.has(id)}
+                  videoId={id}
+                  collectionId={collectionId}
                   onBufferAhead={(ahead) => reportBuffer(id, ahead)}
                   onUnavailable={() => reportUnavailable(id)}
                 />

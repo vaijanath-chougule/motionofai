@@ -210,6 +210,7 @@ export default function CinematicReel({ projects, mobile = false }) {
                   near={near.has(i)}
                   active={i === active}
                   mobile={mobile}
+                  collectionId={project.id}
                 />
               ) : (
                 <ReelCard
@@ -239,6 +240,8 @@ export default function CinematicReel({ projects, mobile = false }) {
                       active={i === active}
                       // Each card starts muted; user unmutes via the button above.
                       muted={mutedCards.has(project.id)}
+                      videoId={project.id}
+                      collectionId="cinematic-reel"
                       // Restart from the top whenever this card enters centre.
                       resetOnActivate
                       // Solid black before the first frame — no white flash.
