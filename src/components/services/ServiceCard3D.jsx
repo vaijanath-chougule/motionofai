@@ -43,7 +43,7 @@ export default function ServiceCard3D() {
       onMouseLeave={resetCursor}
     >
       <div className="reveal flex flex-1 flex-col">
-        <div className={`${CARD_MEDIA} ${CARD_MEDIA_ASPECT}`}>
+        <div className={`${CARD_MEDIA} aspect-video md:aspect-[4/3] lg:aspect-video`}>
           <video
             className="h-full w-full rounded-[24px] object-cover"
             autoPlay

@@ -186,11 +186,11 @@ export default function Navbar() {
               onMouseEnter={() => setCursor('hover')}
               onMouseLeave={resetCursor}
               className="lg:hidden flex items-center justify-center transition-all duration-300 active:scale-95"
-              style={{ width: '44px', height: '31px' }}
+              style={{ width: '34px', height: '24px' }}
               aria-label="YouTube"
             >
               {/* Standard YouTube logo: red squircle + white play triangle */}
-              <svg viewBox="0 0 44 31" fill="none" xmlns="http://www.w3.org/2000/svg" width="44" height="31">
+              <svg viewBox="0 0 44 31" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="24">
                 <rect width="44" height="31" rx="8" fill="#FF0000"/>
                 <path d="M18.5 10.5L28.5 15.5L18.5 20.5V10.5Z" fill="white"/>
               </svg>
@@ -211,7 +211,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
-            className="ml-auto flex h-10 w-10 flex-col items-center justify-center gap-[5px] lg:hidden"
+            className="flex h-10 w-10 flex-col items-center justify-center gap-[5px] lg:hidden"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
           >

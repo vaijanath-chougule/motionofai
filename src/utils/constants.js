@@ -88,7 +88,12 @@ export const MEDIA = {
 // The wedding-invitation collection that drives the /ai-video-production
 // showcase. Read straight off FEATURED_REEL so the Work grid shares ONE asset
 // configuration with that page — these R2 paths are never copied.
-const WEDDING_REELS = FEATURED_REEL.find((p) => p.variant === 'reels')?.reels ?? [];
+// Specifically target the Nimantran Stories collection (reel-01), not the first
+// 'reels' variant, since multiple collections now share that variant.
+const WEDDING_REELS = FEATURED_REEL.find((p) => p.id === 'reel-01')?.reels ?? [];
+
+// The jewellery collection from the AI Video Production showcase.
+const JEWELLERY_REELS = FEATURED_REEL.find((p) => p.id === 'reel-06')?.reels ?? [];
 
 // The work grid. `span` drives the aspect ratio and therefore the rhythm.
 //
@@ -119,6 +124,7 @@ export const WORK_ITEMS = [
     // Product-ad reel from the ai-video-production/desktop tree.
     // No separate mobile cut exists; both point at the same desktop source.
     reel: {
+      id: 'work-w1-product-ad',
       desktopVideo: reelAsset('desktop', 'product-add-3/hf_20260730_042703_b9cf9e99-aa69-43d1-98b6-783a680f285f.mp4'),
       mobileVideo:  reelAsset('desktop', 'product-add-3/hf_20260730_042703_b9cf9e99-aa69-43d1-98b6-783a680f285f.mp4'),
     },
@@ -131,6 +137,7 @@ export const WORK_ITEMS = [
     tag: 'Premium 3D Website',
     span: 'video',
     reel: {
+      id: 'work-w3-alta-yacht',
       desktopVideo: 'https://assets.wenilo.com/3d-websites/alta/0831.mp4',
       mobileVideo: 'https://assets.wenilo.com/3d-websites/alta/0831.mp4',
     },
@@ -147,6 +154,7 @@ export const WORK_ITEMS = [
     // verbatim (see config/assets.js) — this filename carries two spaces.
     // No separate mobile cut exists; both point at the same desktop source.
     reel: {
+      id: 'work-w4-suvi-ad',
       desktopVideo: reelAsset('desktop', 'product%20add/0808%20(2).mp4'),
       mobileVideo:  reelAsset('desktop', 'product%20add/0808%20(2).mp4'),
     },
@@ -164,9 +172,9 @@ export const WORK_ITEMS = [
   {
     id: 'w7',
     title: 'AI Video Production',
-    tag: 'Wedding Invitation',
+    tag: 'Jewellery Ad',
     span: 'tall',
-    reel: WEDDING_REELS[0],
+    reel: JEWELLERY_REELS[2],
     to: '/ai-video-production',
   },
 ];

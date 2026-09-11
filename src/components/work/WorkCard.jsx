@@ -108,6 +108,7 @@ function WorkCardReel({ reel, label }) {
         label={label}
         near={near}
         active={onScreen}
+        videoId={reel.id}
       />
     </div>
   );

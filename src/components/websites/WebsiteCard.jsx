@@ -54,7 +54,7 @@ export default function WebsiteCard({ project }) {
       href={project.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border bg-white/70 p-3 shadow-[0_8px_40px_-12px_rgba(37,99,235,0.12),0_30px_90px_-50px_rgba(17,17,17,0.18)] backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform hover:-translate-y-2 hover:scale-[1.01] hover:shadow-[0_16px_60px_-12px_rgba(37,99,235,0.22),0_50px_120px_-45px_rgba(17,17,17,0.22)] md:p-4"
+      className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border bg-white/70 p-4 shadow-[0_8px_40px_-12px_rgba(37,99,235,0.12),0_30px_90px_-50px_rgba(17,17,17,0.18)] backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform hover:-translate-y-2 hover:scale-[1.01] hover:shadow-[0_16px_60px_-12px_rgba(37,99,235,0.22),0_50px_120px_-45px_rgba(17,17,17,0.22)] md:p-4"
       style={{ borderColor: 'rgba(147,197,253,0.4)' }}
       onMouseEnter={() => {
         setCursor('view', 'Visit');
@@ -67,7 +67,7 @@ export default function WebsiteCard({ project }) {
       aria-label={`View ${project.title} website`}
     >
       {/* 16:9 Video Preview - Larger on mobile */}
-      <div className="relative -mx-2 overflow-hidden rounded-[24px] md:mx-0" style={{ aspectRatio: '16 / 9' }}>
+      <div className="relative overflow-hidden rounded-[24px]" style={{ aspectRatio: '16 / 9' }}>
         <video
           ref={videoRef}
           className="h-full w-full object-cover"
