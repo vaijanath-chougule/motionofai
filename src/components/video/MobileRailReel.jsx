@@ -192,9 +192,17 @@ export default function MobileRailReel({ projects }) {
             carousel; vertical gestures pass through to the page scroll.
           - scroll-snap-type: x mandatory → settle cleanly on each card.
           - gap keeps cards "immediately adjacent with a small intentional gap"
-            per the brief; no large vertical sections, no stacked collections. */}
+            per the brief; no large vertical sections, no stacked collections.
+          - data-lenis-prevent → Lenis (the global smooth scroll) skips this
+            element entirely so its touch listener does NOT preventDefault the
+            horizontal pan. Without this attribute, Lenis intercepts the touch
+            event and the rail refuses to scroll. The attribute is the
+            documented Lenis escape hatch; the CSS rule in index.css that
+            matches it only adds overscroll-behavior: contain, but Lenis itself
+            reads the attribute at runtime. */}
       <div
         ref={scrollerRef}
+        data-lenis-prevent
         className="relative flex overflow-x-auto overflow-y-hidden overscroll-x-contain py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
           scrollSnapType: 'x mandatory',
