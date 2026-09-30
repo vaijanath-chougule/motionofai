@@ -6,6 +6,7 @@ import { prefersReducedMotion } from '../../utils/device';
 import { FEATURED_REEL } from '../../data/videoPortfolio';
 import Typewriter from '../motion/Typewriter';
 import CinematicReel from '../video/CinematicReel';
+import MobileRailReel from '../video/MobileRailReel';
 import MobileReel from '../video/MobileReel';
 
 /**
@@ -158,7 +159,11 @@ export default function AIVideoProduction() {
           }}
         />
         {pinned ? (
-          <CinematicReel projects={FEATURED_REEL} mobile={isMobile} />
+          isMobile ? (
+            <MobileRailReel projects={FEATURED_REEL} />
+          ) : (
+            <CinematicReel projects={FEATURED_REEL} />
+          )
         ) : (
           <MobileReel projects={FEATURED_REEL} />
         )}

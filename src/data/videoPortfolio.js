@@ -127,13 +127,19 @@ export const FEATURED_REEL = [
     ],
   },
   {
-    id: 'reel-02',
-    title: 'Goodies',
-    category: 'Product Commercial',
+    // SINGLE CARD inserted immediately after the five-card Jewellery Ad
+    // collection (slot 2 of the cinematic reel: Jewellery → Minar).
+    // Uses the standard ReelCard render path (no `variant: 'reels'`), inherits
+    // the same dimensions, autoplay/muted/loop/playsInline, lazy loading,
+    // IntersectionObserver-driven playback and audio priority as every other
+    // single card.
+    id: 'reel-07',
+    title: '100% AI generated',
+    category: 'AI Film',
     description:
-      'A gold-lit product film where every reflection and highlight is AI-rendered to perfection.',
-    desktopVideo: reelAsset('desktop', 'product-add-2/hf_20260729_122036_38a26403-3e7c-4d61-8c05-334b215403c7.mp4'),
-    poster: reelAsset('desktop', 'posters/aurum-poster.webp'),
+      'A precision-crafted product film where every surface, reflection and highlight is generated end-to-end by AI.',
+    desktopVideo: reelAsset('desktop', 'product-add-2/minar%20final%202k.mp4'),
+    poster: reelAsset('desktop', 'posters/minar-poster.webp'),
   },
   {
     id: 'reel-01',
