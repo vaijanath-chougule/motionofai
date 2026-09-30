@@ -188,18 +188,24 @@ export default function MobileRailReel({ projects }) {
       />
 
       {/* The rail itself.
-          - overflow-x: auto + touch-action: pan-y → horizontal swipe drives the
-            carousel; vertical gestures pass through to the page scroll.
+          - overflow-x: auto → cards extend past the viewport; the rail
+            becomes a horizontal scroll container.
+          - touch-action: AUTO (not pan-y) → the browser natively handles
+            BOTH horizontal and vertical pans on this element. Horizontal
+            pans scroll the rail; vertical pans fall through to the page
+            because the rail itself has no vertical overflow. (touch-action:
+            pan-y was tried first; it explicitly forbids the browser from
+            handling horizontal pan, which made the rail refuse to scroll —
+            touch-action always overrides overflow for touch gestures, so
+            overflow-x: auto did nothing under pan-y.)
+          - data-lenis-prevent → Lenis (smooth scroll engine, listeners on
+            window) skips preventDefault on any touch whose composedPath
+            hits this element. Verified in node_modules/lenis 1.3.25:
+            VirtualScroll.onVirtualScroll walks composedPath and returns
+            early on the attribute. So Lenis stays out of the way and the
+            browser's native handling proceeds.
           - scroll-snap-type: x mandatory → settle cleanly on each card.
-          - gap keeps cards "immediately adjacent with a small intentional gap"
-            per the brief; no large vertical sections, no stacked collections.
-          - data-lenis-prevent → Lenis (the global smooth scroll) skips this
-            element entirely so its touch listener does NOT preventDefault the
-            horizontal pan. Without this attribute, Lenis intercepts the touch
-            event and the rail refuses to scroll. The attribute is the
-            documented Lenis escape hatch; the CSS rule in index.css that
-            matches it only adds overscroll-behavior: contain, but Lenis itself
-            reads the attribute at runtime. */}
+          - gap keeps cards immediately adjacent per the brief. */}
       <div
         ref={scrollerRef}
         data-lenis-prevent
@@ -207,7 +213,7 @@ export default function MobileRailReel({ projects }) {
         style={{
           scrollSnapType: 'x mandatory',
           WebkitOverflowScrolling: 'touch',
-          touchAction: 'pan-y',
+          touchAction: 'auto',
           gap: '14px',
           paddingLeft: 'max(16px, calc((100vw - min(88vw,560px)) / 2))',
           paddingRight: 'max(16px, calc((100vw - min(88vw,560px)) / 2))',
