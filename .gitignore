@@ -15,3 +15,8 @@ optimized-videos/
 
 # Large video assets - hosted on Cloudflare
 work-section/*.mp4
+
+# First-frame posters extracted for the AI Video Production jewellery +
+# wedding cards. Hosted on Cloudflare/R2; only the source videos stay local.
+generated-posters/jewellery-*.webp
+generated-posters/wedding-*.webp

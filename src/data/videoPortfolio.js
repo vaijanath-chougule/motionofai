@@ -20,6 +20,29 @@
 
 import { desktopAsset, mobileAsset, reelAsset } from '../config/assets';
 
+// ----------------------------------------------------------------
+// First-frame posters for the AI Video Production "showcase"
+// collections (Jewellery — 5 cards; Nimantran — 5 wedding cards).
+// Each poster is the actual first frame of its corresponding video,
+// extracted locally and uploaded to R2 at ai-video-production/desktop/posters/.
+// ----------------------------------------------------------------
+const R2_POSTERS = 'https://assets.wenilo.com/ai-video-production/desktop/posters';
+
+export const JEWELLERY_POSTERS = {
+  'jewellery-01.webp': `${R2_POSTERS}/jewellery-01.webp`,
+  'jewellery-02.webp': `${R2_POSTERS}/jewellery-02.webp`,
+  'jewellery-03.webp': `${R2_POSTERS}/jewellery-03.webp`,
+  'jewellery-04.webp': `${R2_POSTERS}/jewellery-04.webp`,
+  'jewellery-05.webp': `${R2_POSTERS}/jewellery-05.webp`,
+};
+export const WEDDING_POSTERS = {
+  'wedding-01.webp': `${R2_POSTERS}/wedding-01.webp`,
+  'wedding-02.webp': `${R2_POSTERS}/wedding-02.webp`,
+  'wedding-03.webp': `${R2_POSTERS}/wedding-03.webp`,
+  'wedding-04.webp': `${R2_POSTERS}/wedding-04.webp`,
+  'wedding-05.webp': `${R2_POSTERS}/wedding-05.webp`,
+};
+
 // Column-level copy + destination. Fixed per the section design;
 // the scalable, growable part is VIDEO_PORTFOLIO below.
 export const VIDEO_CATEGORIES = [
@@ -95,6 +118,7 @@ export const FEATURED_REEL = [
         category: '',
         desktopVideo: reelAsset('desktop', '3rd-card/video1-optimized.mp4'),
         mobileVideo: reelAsset('desktop', '3rd-card/video1-optimized.mp4'),
+        poster: JEWELLERY_POSTERS['jewellery-01.webp'],
       },
       {
         id: 'reel-06-02',
@@ -102,6 +126,7 @@ export const FEATURED_REEL = [
         category: '',
         desktopVideo: reelAsset('desktop', '3rd-card/video2-optimized.mp4'),
         mobileVideo: reelAsset('desktop', '3rd-card/video2-optimized.mp4'),
+        poster: JEWELLERY_POSTERS['jewellery-02.webp'],
       },
       {
         id: 'reel-06-03',
@@ -109,6 +134,7 @@ export const FEATURED_REEL = [
         category: '',
         desktopVideo: reelAsset('desktop', '3rd-card/video3-optimized.mp4'),
         mobileVideo: reelAsset('desktop', '3rd-card/video3-optimized.mp4'),
+        poster: JEWELLERY_POSTERS['jewellery-03.webp'],
       },
       {
         id: 'reel-06-04',
@@ -116,6 +142,7 @@ export const FEATURED_REEL = [
         category: '',
         desktopVideo: reelAsset('desktop', '3rd-card/video4-optimized.mp4'),
         mobileVideo: reelAsset('desktop', '3rd-card/video4-optimized.mp4'),
+        poster: JEWELLERY_POSTERS['jewellery-04.webp'],
       },
       {
         id: 'reel-06-05',
@@ -123,6 +150,7 @@ export const FEATURED_REEL = [
         category: '',
         desktopVideo: reelAsset('desktop', '3rd-card/video5-optimized.mp4'),
         mobileVideo: reelAsset('desktop', '3rd-card/video5-optimized.mp4'),
+        poster: JEWELLERY_POSTERS['jewellery-05.webp'],
       },
     ],
   },
@@ -165,30 +193,35 @@ export const FEATURED_REEL = [
         title: 'Mahesh & Sakshi',
         desktopVideo: reelAsset('desktop', '01/0404%20(1).mp4'),
         mobileVideo: reelAsset('mobile', '01/0404%20(1).mp4'),
+        poster: WEDDING_POSTERS['wedding-01.webp'],
       },
       {
         id: 'nimantran-02',
         title: 'Ethen & Grace',
         desktopVideo: reelAsset('desktop', '02/2k.mp4'),
         mobileVideo: reelAsset('mobile', '02/2k.mp4'),
+        poster: WEDDING_POSTERS['wedding-02.webp'],
       },
       {
         id: 'nimantran-03',
         title: 'Arjun & Ananya',
         desktopVideo: reelAsset('desktop', '03/Panjabi.mp4'),
         mobileVideo: reelAsset('mobile', '03/Panjabi.mp4'),
+        poster: WEDDING_POSTERS['wedding-03.webp'],
       },
       {
         id: 'nimantran-04',
         title: 'Rakesh & Arpita',
         desktopVideo: reelAsset('desktop', '04/4.mp4'),
         mobileVideo: reelAsset('mobile', '04/4.mp4'),
+        poster: WEDDING_POSTERS['wedding-04.webp'],
       },
       {
         id: 'nimantran-05',
         title: 'Rahul & Priya',
         desktopVideo: reelAsset('desktop', '05/Rahul%20%26%20Priya.mp4'),
         mobileVideo: reelAsset('mobile', '05/Rahul%20%26%20Priya.mp4'),
+        poster: WEDDING_POSTERS['wedding-05.webp'],
       },
     ],
   },
