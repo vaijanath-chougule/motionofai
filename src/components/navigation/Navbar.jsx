@@ -108,6 +108,10 @@ export default function Navbar() {
         const el = document.getElementById(id);
         if (el) scrollTo(el, { offset: -40 });
       };
+      // If the mobile menu just paused Lenis, `scrollTo` would no-op because
+      // Lenis short-circuits while stopped. Resume synchronously before
+      // scrolling on the same page so the click handler's scroll survives.
+      if (location.pathname === '/') lenis?.start();
       if (location.pathname !== '/') {
         navigate('/');
         // Wait for the home route to paint before scrolling.
@@ -116,7 +120,7 @@ export default function Navbar() {
         doScroll();
       }
     },
-    [location.pathname, navigate, scrollTo],
+    [location.pathname, lenis, navigate, scrollTo],
   );
 
   return (
