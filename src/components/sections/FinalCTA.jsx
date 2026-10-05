@@ -34,7 +34,7 @@ const CONTACTS = [
     Icon: FaInstagram,
     label: 'Instagram',
     brand: true,
-    href: 'https://www.instagram.com/wenilo.ai?utm_source=qr&igsh=aGV4NXYzeDh0MGIx',
+    href: 'https://www.instagram.com/vaibhav__chougule?utm_source=qr&stkn=Yzl4eDFhY2RkYmlt',
     external: true,
   },
   {
@@ -44,7 +44,7 @@ const CONTACTS = [
     href: "https://wa.me/918600186550?text=Hi%20Wenilo!%20I%27m%20interested%20in%20your%20services.%20I%27d%20love%20to%20discuss%20my%20project.%20Could%20we%20connect%3F",
     external: true,
   },
-  { Icon: FaLinkedin, label: 'LinkedIn', brand: true },
+  { Icon: FaLinkedin, label: 'LinkedIn', brand: true, href: 'https://www.linkedin.com/in/vaibhav--chougule', external: true },
   {
     Icon: FaYoutube,
     label: 'YouTube',
@@ -54,9 +54,9 @@ const CONTACTS = [
   },
   {
     Icon: MdEmail,
-    label: 'weniloai@gmail.com',
+    label: 'admin@wenilo.com',
     brand: true,
-    href: 'mailto:weniloai@gmail.com?subject=Project%20Inquiry&body=Hi%20Wenilo,%0A%0AI%20would%20like%20to%20discuss%20my%20project.',
+    href: 'mailto:admin@wenilo.com',
   },
   { Icon: FaXTwitter, label: 'X', brand: true, href: 'https://x.com/wenilo', external: true },
 ];
